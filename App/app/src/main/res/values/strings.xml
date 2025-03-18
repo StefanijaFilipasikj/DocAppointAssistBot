@@ -2,4 +2,12 @@
     <string name="app_name">DocAppointAssistBot</string>
     <string name="doctor_image">Doctor Image</string>
     <string name="view_doctors">View Doctors</string>
+    <string name="app_logo">App Logo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="already_have_an_account_login">Already have an account? Login</string>
 </resources>
