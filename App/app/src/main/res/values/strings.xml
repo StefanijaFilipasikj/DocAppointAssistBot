@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DocAppointAssistBot</string>
+    <string name="doctor_image">Doctor Image</string>
+    <string name="view_doctors">View Doctors</string>
 </resources>
