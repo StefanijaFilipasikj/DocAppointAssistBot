@@ -10,4 +10,10 @@
     <string name="sign_up">Sign Up</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="already_have_an_account_login">Already have an account? Login</string>
+    <string name="appointments">Appointments</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="doctors">Doctors</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
 </resources>

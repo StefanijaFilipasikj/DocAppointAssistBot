@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_100">#85D7FF</color>
-    <color name="blue_200">#63C4F5</color>
-    <color name="blue_300">#49B1EB</color>
-    <color name="blue_400">#34A0DB</color>
-    <color name="blue_500">#107AB0</color>
-    <color name="blue_600">#096796</color>
-    <color name="blue_700">#07547A</color>
-    <color name="blue_800">#064361</color>
-    <color name="blue_900">#043147</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- BLUES -->
+    <!-- MAINLY USE 100,200 AND 500 -->
+    <color name="blue_100">#DBEBF3</color>
+    <color name="blue_200">#ACD1E4</color>
+    <color name="blue_300">#7CB6D4</color>
+    <color name="blue_400">#4C9BC4</color>
+    <color name="blue_500">#107AB0</color> <!--main color-->
+    <color name="blue_600">#0E6896</color>
+    <color name="blue_700">#0A4F72</color>
+    <color name="blue_800">#07374F</color>
+    <color name="blue_900">#041E2C</color>
+
+    <!-- GRAYS -->
+    <color name="white">#FFFFFF</color>
+    <color name="gray_100">#FAFAFA</color>
+    <color name="gray_200">#F2F2F2</color>
+    <color name="gray_300">#E6E6E6</color>
+    <color name="gray_400">#DEDEDE</color>
+    <color name="gray_500">#CCCCCC</color>
+    <color name="gray_600">#999999</color>
+    <color name="gray_700">#595959</color>
+    <color name="gray_800">#404040</color>
+    <color name="gray_900">#1B1B1B</color> <!--use instead of pure black-->
+
+    <!--  TRANSPARENT BLACKS  -->
+    <color name="border_light">#1A000000</color>
+    <color name="border_medium">#40000000</color>
+    <color name="border_dark">#66000000</color>
+
+    <!-- ONLY FOR STAR RANKINGS -->
+    <color name="gold">#F9B20B</color>
 </resources>

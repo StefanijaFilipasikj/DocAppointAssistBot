@@ -2,8 +2,12 @@ package mk.ukim.finki.docappointassistbot
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -18,14 +22,53 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.viewDoctors.setOnClickListener{
-            val intent = Intent(this, DoctorsActivity::class.java)
-            startActivity(intent)
-        }
+        val toolbar: Toolbar = findViewById(R.id.topNavigationView)
+        setSupportActionBar(toolbar)
 
-        binding.goToLogin.setOnClickListener{
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        // Bottom navigation bar
+        replaceFragment(HomeFragment())
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.home -> replaceFragment(HomeFragment())
+                R.id.doctors -> replaceFragment(DoctorsFragment())
+                R.id.chatbot -> replaceFragment(ChatbotFragment())
+                R.id.appointments -> replaceFragment(AppointmentsFragment())
+                R.id.settings -> replaceFragment(SettingsFragment())
+
+                else -> {
+
+                }
+            }
+            true
         }
+    }
+
+    // Top navigation bar
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.top_nav, menu)
+        return true
+    }
+
+    // Top navigation bar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.login -> {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.notifications -> replaceFragment(NotificationsFragment())
+
+            else -> {
+
+            }
+        }
+        return true
+    }
+
+    private fun replaceFragment(fragment : Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frameLayout, fragment)
+        fragmentTransaction.commit()
     }
 }
