@@ -56,7 +56,14 @@ class DoctorsFragment : Fragment() {
                         Log.d("DoctorsFragment", "Doctor fetched: $doctor")
                     }
                 }
-                val adapter = DoctorsAdapter(doctors)
+                val adapter = DoctorsAdapter(doctors){ selectedDoctor ->
+                    val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
+
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
                 binding.doctors.adapter = adapter
             }
 

@@ -16,4 +16,11 @@
     <string name="home">Home</string>
     <string name="notifications">Notifications</string>
     <string name="settings">Settings</string>
+    <string name="view_details">View Details</string>
+    <string name="book_appointment">Book Appointment</string>
+    <string name="hospitals">Hospitals:</string>
+    <string name="doctor_overview">DOCTOR OVERVIEW</string>
+    <string name="biography">Biography</string>
+    <string name="schedule">Schedule</string>
+    <string name="location">Location</string>
 </resources>
