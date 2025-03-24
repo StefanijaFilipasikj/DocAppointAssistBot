@@ -23,4 +23,6 @@
     <string name="biography">Biography</string>
     <string name="schedule">Schedule</string>
     <string name="location">Location</string>
+    <string name="select_time">Select Time</string>
+    <string name="select_date">Select Date</string>
 </resources>
