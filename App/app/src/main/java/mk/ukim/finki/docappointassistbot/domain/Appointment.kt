@@ -5,4 +5,6 @@ data class Appointment(
     val userId: String = "",
     val startTime: String = "",
     val endTime: String = "",
+    val status: String = "",
+    var doctor: Doctor? = null,
 )

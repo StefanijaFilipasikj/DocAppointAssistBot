@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +7,69 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/appointments" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/my_appointments"
+        android:textColor="@color/gray_900"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
 
-</FrameLayout>
+    <!-- Tabs for Upcoming, Completed, Canceled -->
+    <LinearLayout
+        android:id="@+id/tabsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:id="@+id/tvUpcoming"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_white_radius05"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/upcoming"
+            android:textColor="@color/gray_900"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvCompleted"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_white_radius05"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/completed"
+            android:textColor="@color/gray_900"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvCanceled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_white_radius05"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/canceled"
+            android:textColor="@color/gray_900"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- RecyclerView for appointments -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/appointmentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tabsLayout"
+        android:padding="8dp" />
+</RelativeLayout>

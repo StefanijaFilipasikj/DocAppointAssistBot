@@ -19,10 +19,17 @@
     <string name="view_details">View Details</string>
     <string name="book_appointment">Book Appointment</string>
     <string name="hospitals">Hospitals:</string>
-    <string name="doctor_overview">DOCTOR OVERVIEW</string>
+    <string name="doctor_overview">Doctor Overview</string>
     <string name="biography">Biography</string>
     <string name="schedule">Schedule</string>
     <string name="location">Location</string>
     <string name="select_time">Select Time</string>
     <string name="select_date">Select Date</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="completed">Completed</string>
+    <string name="canceled">Canceled</string>
+    <string name="my_appointments">My Appointments</string>
+    <string name="patients">Patients</string>
+    <string name="experience">Experience</string>
+    <string name="reviews">Reviews</string>
 </resources>

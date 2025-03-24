@@ -20,12 +20,14 @@
             <!-- Title -->
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/doctor_overview"
-                android:textSize="18sp"
+                android:textColor="@color/gray_900"
+                android:textSize="26sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="10dp"/>
 
             <!-- Image -->
             <ImageView
@@ -43,7 +45,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="4dp"
+                android:textColor="@color/gray_900"/>
 
             <!-- Specialty -->
             <TextView
@@ -70,8 +73,9 @@
                     android:textSize="16sp"
                     android:paddingVertical="24dp"
                     android:paddingHorizontal="16dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@drawable/rounded_background" />
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/bg_blue200_radius20"
+                    android:text="@string/patients"/>
 
                 <TextView
                     android:id="@+id/tvYearsExperience"
@@ -81,7 +85,8 @@
                     android:textSize="16sp"
                     android:paddingVertical="24dp"
                     android:paddingHorizontal="16dp"
-                    android:background="@drawable/rounded_background" />
+                    android:background="@drawable/bg_blue200_radius20"
+                    android:text="@string/experience"/>
 
                 <TextView
                     android:id="@+id/tvNumReviews"
@@ -92,7 +97,8 @@
                     android:paddingVertical="24dp"
                     android:paddingHorizontal="16dp"
                     android:layout_marginStart="20dp"
-                    android:background="@drawable/rounded_background" />
+                    android:background="@drawable/bg_blue200_radius20"
+                    android:text="@string/reviews"/>
             </LinearLayout>
 
             <!-- Biography Section -->
@@ -101,7 +107,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/biography"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:textColor="@color/gray_900"/>
 
             <TextView
                 android:id="@+id/tvBiography"
@@ -115,7 +122,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/schedule"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:textColor="@color/gray_900"/>
 
             <TextView
                 android:id="@+id/tvSchedule"
@@ -129,7 +137,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/location"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:textColor="@color/gray_900"/>
 
             <TextView
                 android:id="@+id/tvCityAndCountry"

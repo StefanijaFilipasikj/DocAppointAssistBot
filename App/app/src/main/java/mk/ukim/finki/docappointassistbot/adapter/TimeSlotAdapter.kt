@@ -60,15 +60,15 @@ class TimeSlotAdapter(private val onItemClick: (String) -> Unit) :
             when {
                 isBooked -> {
                     tvTimeSlot.setTextColor(itemView.context.getColor(R.color.gray_600))
-                    itemView.setBackgroundResource(R.drawable.time_slot_booked)
+                    itemView.setBackgroundResource(R.drawable.bg_gray500_radius10)
                 }
                 isSelected -> {
                     tvTimeSlot.setTextColor(itemView.context.getColor(R.color.white))
-                    itemView.setBackgroundResource(R.drawable.time_slot_selected)
+                    itemView.setBackgroundResource(R.drawable.bg_blue500_radius10)
                 }
                 else -> {
                     tvTimeSlot.setTextColor(itemView.context.getColor(R.color.gray_900))
-                    itemView.setBackgroundResource(R.drawable.time_slot_unselected)
+                    itemView.setBackgroundResource(R.drawable.bg_white_radius10)
                 }
             }
 

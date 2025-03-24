@@ -51,7 +51,7 @@ class BookAppointmentFragment : Fragment() {
 
         doctorId = arguments?.getInt("doctor_id") ?: 0
         val doctorName = arguments?.getString("doctor_name") ?: "Unknown Doctor"
-        binding.tvDoctorFullName.text = "Booking for doctor: $doctorName"
+        binding.tvDoctorFullName.text = "Booking: $doctorName"
 
         timeSlotAdapter = TimeSlotAdapter { time -> selectedTime = time }
         binding.rvTimeSlots.layoutManager = GridLayoutManager(requireContext(), 3)
@@ -151,7 +151,8 @@ class BookAppointmentFragment : Fragment() {
             doctorId = doctorId,
             userId = userId,
             startTime = startTime,
-            endTime = endTime
+            endTime = endTime,
+            status = "Upcoming"
         )
 
         firebaseRef.child("appointments").push().setValue(appointment)
@@ -161,5 +162,11 @@ class BookAppointmentFragment : Fragment() {
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Failed to book!", Toast.LENGTH_SHORT).show()
             }
+
+        val fragment = AppointmentsFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
