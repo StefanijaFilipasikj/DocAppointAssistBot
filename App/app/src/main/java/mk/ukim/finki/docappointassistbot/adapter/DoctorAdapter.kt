@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import mk.ukim.finki.docappointassistbot.databinding.DoctorItemBinding
+import mk.ukim.finki.docappointassistbot.databinding.ItemDoctorBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.R
 
@@ -13,10 +13,10 @@ class DoctorsAdapter(
     private val onDoctorClick: (Doctor) -> Unit
 ) : RecyclerView.Adapter<DoctorsAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding : DoctorItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding : ItemDoctorBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(DoctorItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemDoctorBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {

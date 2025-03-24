@@ -130,7 +130,6 @@ class DoctorDetailsFragment : Fragment() {
     }
 
     private fun updateUI(doctor: Doctor) {
-
         Glide.with(requireContext())
             .load(doctor.image)
             .centerCrop()
@@ -157,6 +156,19 @@ class DoctorDetailsFragment : Fragment() {
             "•  ${it.name}"
         }
         binding.tvHospitals.text = hospitalsText
+
+        binding.btnBookAppointment.setOnClickListener {
+            val bookAppointmentFragment = BookAppointmentFragment()
+            val bundle = Bundle()
+            bundle.putString("doctor_name", doctor.fullname)
+            bundle.putInt("doctor_id", doctor.id)
+            bookAppointmentFragment.arguments = bundle
+
+            val fragmentTransaction = parentFragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.frameLayout, bookAppointmentFragment)
+            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.commit()
+        }
     }
 
     private fun formatNumberToK(number: Int): String {
