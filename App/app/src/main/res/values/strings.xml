@@ -32,4 +32,13 @@
     <string name="patients">Patients</string>
     <string name="experience">Experience</string>
     <string name="reviews">Reviews</string>
+    <string name="turn_on_location">Turn on location</string>
+    <string name="enable_location_description">Enable location sharing to view nearby doctors and hospitals.</string>
+    <string name="turn_on">TURN ON</string>
+    <string name="no_thanks">NO, THANKS</string>
+    <string name="turn_on_notifications">Turn on notifications</string>
+    <string name="enable_notifications_description">Enable notifications to receive timely alerts about your booked appointments</string>
+    <string name="medibot">MediBot</string>
+    <string name="medibot_description">Easily schedule doctor appointments with our Assistant Bot guiding you to the most suitable specialist.</string>
+    <string name="continue_str">CONTINUE</string>
 </resources>
