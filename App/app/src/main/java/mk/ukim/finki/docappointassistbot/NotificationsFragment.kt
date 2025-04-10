@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class NotificationsFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: NotificationsAdapter
+    private lateinit var upcomingRecyclerView: RecyclerView
+    private lateinit var recentRecyclerView: RecyclerView
+    private lateinit var upcomingAdapter: NotificationsAdapter
+    private lateinit var recentAdapter: NotificationsAdapter
     private lateinit var viewModel: NotificationsViewModel
 
     override fun onCreateView(
@@ -22,15 +26,34 @@ class NotificationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
-        recyclerView = view.findViewById(R.id.notificationsRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        upcomingRecyclerView = view.findViewById(R.id.upcomingRecyclerView)
+        upcomingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        recentRecyclerView = view.findViewById(R.id.recentRecyclerView)
+        recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         viewModel = ViewModelProvider(this).get(NotificationsViewModel::class.java)
-        viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
-            adapter = NotificationsAdapter(notifications)
-            recyclerView.adapter = adapter
-        }
 
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+
+        viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
+            val upcomingNotifications = notifications.filter {
+                val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
+                startTime > System.currentTimeMillis()
+            }
+
+            val recentNotifications = notifications.filter {
+                val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
+                startTime <= System.currentTimeMillis()
+            }
+
+            upcomingAdapter = NotificationsAdapter(upcomingNotifications)
+            upcomingRecyclerView.adapter = upcomingAdapter
+
+            recentAdapter = NotificationsAdapter(recentNotifications)
+            recentRecyclerView.adapter = recentAdapter
+        }
         return view
     }
 }
