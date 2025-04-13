@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
+import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -33,7 +34,8 @@ class NotificationsFragment : Fragment() {
         recentRecyclerView = view.findViewById(R.id.recentRecyclerView)
         recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel = ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        val factory = NotificationsViewModelFactory(requireContext())
+        viewModel = ViewModelProvider(this, factory).get(NotificationsViewModel::class.java)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
 
@@ -48,12 +50,19 @@ class NotificationsFragment : Fragment() {
                 startTime <= System.currentTimeMillis()
             }
 
-            upcomingAdapter = NotificationsAdapter(upcomingNotifications)
-            upcomingRecyclerView.adapter = upcomingAdapter
+            viewModel.notificationStates.observe(viewLifecycleOwner) { notificationStates ->
+                upcomingAdapter = NotificationsAdapter(upcomingNotifications, notificationStates) { id, isChecked ->
+                    viewModel.updateNotificationState(id, isChecked)
+                }
+                upcomingRecyclerView.adapter = upcomingAdapter
 
-            recentAdapter = NotificationsAdapter(recentNotifications)
-            recentRecyclerView.adapter = recentAdapter
+                recentAdapter = NotificationsAdapter(recentNotifications, notificationStates) { id, isChecked ->
+                    viewModel.updateNotificationState(id, isChecked)
+                }
+                recentRecyclerView.adapter = recentAdapter
+            }
         }
+
         return view
     }
 }
