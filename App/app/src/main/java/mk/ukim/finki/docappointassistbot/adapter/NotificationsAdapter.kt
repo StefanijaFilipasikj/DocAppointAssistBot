@@ -12,7 +12,7 @@ import mk.ukim.finki.docappointassistbot.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class NotificationsAdapter(private var notifications: List<Notification>, private val notificationStates: Map<Int, Boolean>, private val onNotificationStateChanged: (Int, Boolean) -> Unit) :
+class NotificationsAdapter(var notifications: List<Notification>, var notificationStates: Map<Int, Boolean>, private val onNotificationStateChanged: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
 
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

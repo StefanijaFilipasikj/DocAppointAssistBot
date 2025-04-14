@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -16,7 +15,11 @@ import mk.ukim.finki.docappointassistbot.domain.Hospital
 import mk.ukim.finki.docappointassistbot.domain.Notification
 import androidx.core.content.edit
 
-class NotificationsViewModel(context: Context) : ViewModel() {
+class NotificationsViewModel(
+    context: Context,
+    private val appointmentsViewModel: AppointmentsViewModel
+) : ViewModel() {
+
     private val _notifications = MutableLiveData<List<Notification>>()
     val notifications: LiveData<List<Notification>> get() = _notifications
     private val _notificationStates = MutableLiveData<Map<Int, Boolean>>()
@@ -25,45 +28,16 @@ class NotificationsViewModel(context: Context) : ViewModel() {
     private val dbRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app").reference
     private val sharedPrefs = context.getSharedPreferences("notification_prefs", Context.MODE_PRIVATE)
 
-    private fun loadNotificationStates(): Map<Int, Boolean> {
-        val allPrefs = sharedPrefs.all
-        return allPrefs.mapNotNull {
-            val key = it.key.toIntOrNull()
-            val value = it.value as? Boolean
-            if (key != null && value != null) key to value else null
-        }.toMap()
-    }
-
-    private fun saveNotificationState(id: Int, isEnabled: Boolean) {
-        sharedPrefs.edit() { putBoolean(id.toString(), isEnabled) }
-    }
-
     init {
         _notificationStates.value = loadNotificationStates()
-        loadUserAppointments()
-    }
 
-    private fun loadUserAppointments() {
-        val userId = FirebaseAuth.getInstance().currentUser?.email ?: return
-
-        viewModelScope.launch {
-            try {
-                val snapshot = dbRef.child("appointments")
-                    .orderByChild("userId")
-                    .equalTo(userId)
-                    .get()
-                    .await()
-
-                val appointments = mutableListOf<Appointment>()
-                for (data in snapshot.children) {
-                    val appointment = data.getValue(Appointment::class.java)
-                    if (appointment != null) {
-                        appointments.add(appointment)
-                    }
+        appointmentsViewModel.appointments.observeForever { appointments ->
+            if (appointments.isNotEmpty()) {
+                viewModelScope.launch {
+                    fetchDoctorsForAppointments(appointments)
                 }
-                fetchDoctorsForAppointments(appointments)
-            } catch (e: Exception) {
-                Log.e("NotificationsVM", "Failed to load appointments: ${e.message}")
+            } else {
+                _notifications.value = emptyList()
             }
         }
     }
@@ -97,7 +71,12 @@ class NotificationsViewModel(context: Context) : ViewModel() {
         _notificationStates.value = notificationStates
     }
 
-    private suspend fun fetchHospitalDetailsForDoctor(doctor: Doctor, appointment: Appointment, notifications: MutableList<Notification>, notificationStates: MutableMap<Int, Boolean>) {
+    private suspend fun fetchHospitalDetailsForDoctor(
+        doctor: Doctor,
+        appointment: Appointment,
+        notifications: MutableList<Notification>,
+        notificationStates: MutableMap<Int, Boolean>
+    ) {
         val hospitalIds = doctor.hospitalIds ?: emptyList()
 
         try {
@@ -118,7 +97,6 @@ class NotificationsViewModel(context: Context) : ViewModel() {
                 isEnabled = savedState
             )
             notifications.add(notification)
-
             notificationStates[updatedAppointment.hashCode()] = savedState
 
         } catch (e: Exception) {
@@ -131,5 +109,18 @@ class NotificationsViewModel(context: Context) : ViewModel() {
         currentStates[appointmentId] = isEnabled
         _notificationStates.value = currentStates
         saveNotificationState(appointmentId, isEnabled)
+    }
+
+    private fun saveNotificationState(id: Int, isEnabled: Boolean) {
+        sharedPrefs.edit() { putBoolean(id.toString(), isEnabled) }
+    }
+
+    private fun loadNotificationStates(): Map<Int, Boolean> {
+        val allPrefs = sharedPrefs.all
+        return allPrefs.mapNotNull {
+            val key = it.key.toIntOrNull()
+            val value = it.value as? Boolean
+            if (key != null && value != null) key to value else null
+        }.toMap()
     }
 }

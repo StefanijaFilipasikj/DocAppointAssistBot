@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
+import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModelFactory
 import java.text.SimpleDateFormat
@@ -21,11 +22,12 @@ class NotificationsFragment : Fragment() {
     private lateinit var upcomingAdapter: NotificationsAdapter
     private lateinit var recentAdapter: NotificationsAdapter
     private lateinit var viewModel: NotificationsViewModel
+    private lateinit var appointmentsViewModel: AppointmentsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_notifications, container, false)
 
         upcomingRecyclerView = view.findViewById(R.id.upcomingRecyclerView)
@@ -34,8 +36,19 @@ class NotificationsFragment : Fragment() {
         recentRecyclerView = view.findViewById(R.id.recentRecyclerView)
         recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val factory = NotificationsViewModelFactory(requireContext())
-        viewModel = ViewModelProvider(this, factory).get(NotificationsViewModel::class.java)
+        appointmentsViewModel = ViewModelProvider(requireActivity()).get(AppointmentsViewModel::class.java)
+        viewModel = ViewModelProvider(this, NotificationsViewModelFactory(requireContext(), appointmentsViewModel))
+            .get(NotificationsViewModel::class.java)
+
+        upcomingAdapter = NotificationsAdapter(emptyList(), emptyMap()) { id, isChecked ->
+            viewModel.updateNotificationState(id, isChecked)
+        }
+        recentAdapter = NotificationsAdapter(emptyList(), emptyMap()) { id, isChecked ->
+            viewModel.updateNotificationState(id, isChecked)
+        }
+
+        upcomingRecyclerView.adapter = upcomingAdapter
+        recentRecyclerView.adapter = recentAdapter
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
 
@@ -51,15 +64,17 @@ class NotificationsFragment : Fragment() {
             }
 
             viewModel.notificationStates.observe(viewLifecycleOwner) { notificationStates ->
-                upcomingAdapter = NotificationsAdapter(upcomingNotifications, notificationStates) { id, isChecked ->
-                    viewModel.updateNotificationState(id, isChecked)
+                upcomingAdapter.apply {
+                    this.notifications = upcomingNotifications
+                    this.notificationStates = notificationStates
+                    notifyDataSetChanged()
                 }
-                upcomingRecyclerView.adapter = upcomingAdapter
 
-                recentAdapter = NotificationsAdapter(recentNotifications, notificationStates) { id, isChecked ->
-                    viewModel.updateNotificationState(id, isChecked)
+                recentAdapter.apply {
+                    this.notifications = recentNotifications
+                    this.notificationStates = notificationStates
+                    notifyDataSetChanged()
                 }
-                recentRecyclerView.adapter = recentAdapter
             }
         }
 
