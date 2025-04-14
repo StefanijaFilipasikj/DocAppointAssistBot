@@ -8,6 +8,8 @@ import com.google.firebase.database.*
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.Hospital
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AppointmentsRepository {
 
@@ -68,7 +70,20 @@ class AppointmentsRepository {
                     .filter { hospitalIds.contains(it.id) }
 
                 appointment.doctor?.hospitals = hospitals
-                appointmentsList.add(appointment)
+
+                if (!appointmentsList.contains(appointment)) {
+                    appointmentsList.add(appointment)
+                }
+
+                val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+                appointmentsList.sortBy {
+                    try {
+                        formatter.parse(it.startTime)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
                 appointmentsLiveData.postValue(appointmentsList)
             }
 
@@ -77,6 +92,7 @@ class AppointmentsRepository {
             }
         })
     }
+
 
     fun filterAppointments(status: String): List<Appointment> {
         return appointmentsList.filter { it.status.equals(status, ignoreCase = true) }
