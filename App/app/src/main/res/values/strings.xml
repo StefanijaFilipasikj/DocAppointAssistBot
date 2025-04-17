@@ -41,4 +41,10 @@
     <string name="medibot">MediBot</string>
     <string name="medibot_description">Easily schedule doctor appointments with our Assistant Bot guiding you to the most suitable specialist.</string>
     <string name="continue_str">CONTINUE</string>
+    <string name="notification_icon">Notification_icon</string>
+    <string name="upcoming_notification">Upcoming</string>
+    <string name="recent_notification">Recent</string>
+    <string name="no_upcoming_notifications">No upcoming notifications</string>
+    <string name="no_recent_notifications">No recent notifications</string>
+    <string name="no_scheduled_appointments">No scheduled appointments</string>
 </resources>
