@@ -16,6 +16,7 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentBookAppointmentBind
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
+import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -147,26 +148,42 @@ class BookAppointmentFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
         Log.d("BookAppointmentFragment", "User email: ${userId}")
 
-        val appointment = Appointment(
-            doctorId = doctorId,
-            userId = userId,
-            startTime = startTime,
-            endTime = endTime,
-            status = "Upcoming"
-        )
+        firebaseRef.child("doctors").child(doctorId.toString()).get().addOnSuccessListener { snapshot ->
+            val doctor = snapshot.getValue(Doctor::class.java)
 
-        firebaseRef.child("appointments").push().setValue(appointment)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Appointment booked!", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Failed to book!", Toast.LENGTH_SHORT).show()
-            }
+            val appointmentRef = firebaseRef.child("appointments").push()
+            val generatedKey = appointmentRef.key
 
-        val fragment = AppointmentsFragment()
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, fragment)
-            .addToBackStack(null)
-            .commit()
+            if (doctor != null) {
+                val appointment = Appointment(
+                    id = generatedKey.hashCode(),
+                    doctorId = doctorId,
+                    userId = userId,
+                    startTime = startTime,
+                    endTime = endTime,
+                    status = "Upcoming",
+                    doctor = doctor
+                )
+
+                firebaseRef.child("appointments").push().setValue(appointment)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Appointment booked!", Toast.LENGTH_SHORT).show()
+
+                        NotificationScheduler.scheduleNotification(requireContext(), appointment)
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Failed to book!", Toast.LENGTH_SHORT).show()
+                    }
+
+                val fragment = AppointmentsFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            } else {
+                Toast.makeText(requireContext(), "Doctor not found!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+
 }

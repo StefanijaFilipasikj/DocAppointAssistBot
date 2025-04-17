@@ -21,7 +21,12 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
         private val subtitle: TextView = itemView.findViewById(R.id.notificationSubtitle)
         private val switch: Switch = itemView.findViewById(R.id.notificationSwitch)
 
-        fun bind(notification: Notification, isChecked: Boolean, isPast: Boolean, onNotificationStateChanged: (Int, Boolean) -> Unit) {
+        fun bind(
+            notification: Notification,
+            isChecked: Boolean,
+            isPast: Boolean,
+            onNotificationStateChanged: (Int, Boolean) -> Unit
+        ) {
             // Set title and subtitle (appointment details)
             val appointment = notification.appointment
             val doctor = appointment.doctor
@@ -32,19 +37,22 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
             // Set the notification icon
             icon.setImageResource(R.drawable.ic_baseline_bell_24)
 
+            // Remove previous listener before setting a new one
+            switch.setOnCheckedChangeListener(null)
+
             // Set the switch state
             switch.isChecked = isChecked
 
             // Disable switch for past notifications
             switch.isEnabled = !isPast
 
-            // Handle switch state change
-            switch.setOnCheckedChangeListener { _, isChecked ->
+            switch.setOnCheckedChangeListener { _, isCheckedNow ->
                 if (switch.isEnabled) {
-                    onNotificationStateChanged(notification.id, isChecked)
+                    onNotificationStateChanged(notification.id, isCheckedNow)
                 }
             }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
@@ -57,7 +65,7 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
         val notification = notifications[position]
         val isChecked = notificationStates[notification.id] ?: true
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
 
         val time = dateFormat.parse(notification.appointment.startTime)?.time ?: 0L
         val isPast = time <= System.currentTimeMillis()

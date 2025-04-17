@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,9 @@ class NotificationsFragment : Fragment() {
     private lateinit var viewModel: NotificationsViewModel
     private lateinit var appointmentsViewModel: AppointmentsViewModel
 
+    private lateinit var noUpcomingNotificationsText: TextView
+    private lateinit var noRecentNotificationsText: TextView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,6 +39,9 @@ class NotificationsFragment : Fragment() {
 
         recentRecyclerView = view.findViewById(R.id.recentRecyclerView)
         recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        noUpcomingNotificationsText = view.findViewById(R.id.tvNoUpcomingNotifications)
+        noRecentNotificationsText = view.findViewById(R.id.tvNoRecentNotifications)
 
         appointmentsViewModel = ViewModelProvider(requireActivity()).get(AppointmentsViewModel::class.java)
         viewModel = ViewModelProvider(this, NotificationsViewModelFactory(requireContext(), appointmentsViewModel))
@@ -50,7 +57,20 @@ class NotificationsFragment : Fragment() {
         upcomingRecyclerView.adapter = upcomingAdapter
         recentRecyclerView.adapter = recentAdapter
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+
+        val upcoming = viewModel.notifications.value?.filter {
+            val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
+            startTime > System.currentTimeMillis()
+        }
+
+        val recent = viewModel.notifications.value?.filter {
+            val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
+            startTime <= System.currentTimeMillis()
+        }
+
+        noUpcomingNotificationsText.visibility = if (upcoming.isNullOrEmpty()) View.VISIBLE else View.GONE
+        noRecentNotificationsText.visibility = if (recent.isNullOrEmpty()) View.VISIBLE else View.GONE
 
         viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
             val upcomingNotifications = notifications.filter {
@@ -62,6 +82,9 @@ class NotificationsFragment : Fragment() {
                 val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
                 startTime <= System.currentTimeMillis()
             }
+
+            noUpcomingNotificationsText.visibility = if (upcomingNotifications.isEmpty()) View.VISIBLE else View.GONE
+            noRecentNotificationsText.visibility = if (recentNotifications.isEmpty()) View.VISIBLE else View.GONE
 
             viewModel.notificationStates.observe(viewLifecycleOwner) { notificationStates ->
                 upcomingAdapter.apply {

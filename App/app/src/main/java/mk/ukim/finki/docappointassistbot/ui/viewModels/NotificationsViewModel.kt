@@ -14,9 +14,10 @@ import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.Hospital
 import mk.ukim.finki.docappointassistbot.domain.Notification
 import androidx.core.content.edit
+import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 
 class NotificationsViewModel(
-    context: Context,
+    private val context: Context,
     private val appointmentsViewModel: AppointmentsViewModel
 ) : ViewModel() {
 
@@ -88,7 +89,7 @@ class NotificationsViewModel(
             doctor.hospitals = hospitals
             val updatedAppointment = appointment.copy(doctor = doctor)
 
-            val notificationId = updatedAppointment.hashCode()
+            val notificationId = updatedAppointment.id
             val savedState = sharedPrefs.getBoolean(notificationId.toString(), true)
 
             val notification = Notification(
@@ -97,7 +98,7 @@ class NotificationsViewModel(
                 isEnabled = savedState
             )
             notifications.add(notification)
-            notificationStates[updatedAppointment.hashCode()] = savedState
+            notificationStates[notificationId] = savedState
 
         } catch (e: Exception) {
             Log.e("NotificationsVM", "Failed to load hospital details: ${e.message}")
@@ -109,6 +110,15 @@ class NotificationsViewModel(
         currentStates[appointmentId] = isEnabled
         _notificationStates.value = currentStates
         saveNotificationState(appointmentId, isEnabled)
+
+        val notification = _notifications.value?.find { it.id == appointmentId }
+        notification?.let {
+            if (isEnabled) {
+                NotificationScheduler.scheduleNotification(context, it.appointment)
+            } else {
+                NotificationScheduler.cancelNotification(context, appointmentId)
+            }
+        }
     }
 
     private fun saveNotificationState(id: Int, isEnabled: Boolean) {

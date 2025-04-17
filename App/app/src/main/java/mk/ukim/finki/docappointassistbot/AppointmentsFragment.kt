@@ -1,6 +1,7 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ class AppointmentsFragment : Fragment() {
     private lateinit var adapter: AppointmentAdapter
     private lateinit var viewModel: AppointmentsViewModel
     private var selectedStatus: TextView? = null
+    private lateinit var noAppointmentsTextView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,14 +34,29 @@ class AppointmentsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        noAppointmentsTextView = binding.noAppointmentsTextView
+
         viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
         adapter = AppointmentAdapter(emptyList())
 
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.appointmentsRecyclerView.adapter = adapter
 
+        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
         viewModel.appointments.observe(viewLifecycleOwner) { appointments ->
-            adapter.updateAppointments(appointments)
+            if (appointments.isEmpty()) {
+                noAppointmentsTextView.visibility = View.VISIBLE
+                binding.appointmentsRecyclerView.visibility = View.GONE
+            } else {
+                noAppointmentsTextView.visibility = View.GONE
+                binding.appointmentsRecyclerView.visibility = View.VISIBLE
+                adapter.updateAppointments(appointments)
+            }
         }
 
         viewModel.fetchAppointments()
