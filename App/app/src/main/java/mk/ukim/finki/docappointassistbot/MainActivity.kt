@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
+import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +40,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         checkNotificationAndAlarmPermissions()
+
+        AppointmentsRepository().checkAndUpdateStatusesForCurrentUser()
 
         // Bottom navigation bar
         replaceFragment(HomeFragment())

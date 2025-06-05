@@ -30,8 +30,9 @@ class AppointmentsRepository {
                     if (appointment != null) {
                         val firebaseKey = data.key
                         if (firebaseKey != null) {
-                            fetchDoctorDetails(appointment, firebaseKey)
+                            updateAppointmentStatus(appointment, firebaseKey)
                         }
+                        fetchDoctorDetails(appointment)
                     }
                 }
             }
@@ -44,7 +45,7 @@ class AppointmentsRepository {
         return appointmentsLiveData
     }
 
-    private fun fetchDoctorDetails(appointment: Appointment, firebaseKey: String) {
+    private fun fetchDoctorDetails(appointment: Appointment) {
         val doctorRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors/${appointment.doctorId}")
 
@@ -53,28 +54,6 @@ class AppointmentsRepository {
                 val doctor = snapshot.getValue(Doctor::class.java)
                 if (doctor != null) {
                     appointment.doctor = doctor
-
-                    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
-                    try{
-                        val appointmentDate = formatter.parse(appointment.startTime)
-                        val now = Date()
-
-                        if (appointmentDate != null && appointmentDate.before(now) && appointment.status.equals("Upcoming", ignoreCase = true)) {
-                            appointment.status = "Completed"
-
-                            val appointmentRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
-                                .getReference("appointments")
-                                .child(firebaseKey)
-
-                            val updates = mapOf<String, Any>(
-                                "status" to "Completed"
-                            )
-                            appointmentRef.updateChildren(updates)
-                        }
-                    } catch (e: Exception) {
-                        Log.e("DateParseError", "Failed to parse appointment date: ${e.message}")
-                    }
-
                     fetchHospitalDetails(appointment, doctor.hospitalIds ?: emptyList())
                 }
             }
@@ -123,4 +102,49 @@ class AppointmentsRepository {
     fun filterAppointments(status: String): List<Appointment> {
         return appointmentsList.filter { it.status.equals(status, ignoreCase = true) }
     }
+
+    fun updateAppointmentStatus(appointment: Appointment, firebaseKey: String) {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+        try {
+            val appointmentDate = formatter.parse(appointment.startTime)
+            val now = Date()
+
+            if (appointmentDate != null &&
+                appointmentDate.before(now) &&
+                appointment.status.equals("Upcoming", ignoreCase = true)
+            ) {
+                val updates = mapOf<String, Any>("status" to "Completed")
+                FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+                    .getReference("appointments")
+                    .child(firebaseKey)
+                    .updateChildren(updates)
+            }
+        } catch (e: Exception) {
+            Log.e("DateParseError", "Failed to parse appointment date: ${e.message}")
+        }
+    }
+
+    fun checkAndUpdateStatusesForCurrentUser() {
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("appointments")
+
+        database.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (data in snapshot.children) {
+                        val appointment = data.getValue(Appointment::class.java)
+                        val firebaseKey = data.key
+                        if (appointment != null && firebaseKey != null) {
+                            updateAppointmentStatus(appointment, firebaseKey)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseError", error.message)
+                }
+            })
+    }
+
 }
