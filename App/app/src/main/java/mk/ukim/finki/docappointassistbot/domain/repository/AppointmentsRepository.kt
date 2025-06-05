@@ -9,6 +9,7 @@ import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.Hospital
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class AppointmentsRepository {
@@ -49,6 +50,28 @@ class AppointmentsRepository {
                 val doctor = snapshot.getValue(Doctor::class.java)
                 if (doctor != null) {
                     appointment.doctor = doctor
+
+                    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+                    try{
+                        val appointmentDate = formatter.parse(appointment.startTime)
+                        val now = Date()
+
+                        if (appointmentDate != null && appointmentDate.before(now) && appointment.status.equals("Upcoming", ignoreCase = true)) {
+                            appointment.status = "Completed"
+
+                            val appointmentRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+                                .getReference("appointments")
+                                .child(appointment.id.toString())
+
+                            val updates = mapOf<String, Any>(
+                                "status" to "Completed"
+                            )
+                            appointmentRef.updateChildren(updates)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("DateParseError", "Failed to parse appointment date: ${e.message}")
+                    }
+
                     fetchHospitalDetails(appointment, doctor.hospitalIds ?: emptyList())
                 }
             }
