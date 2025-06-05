@@ -28,7 +28,10 @@ class AppointmentsRepository {
                 for (data in snapshot.children) {
                     val appointment = data.getValue(Appointment::class.java)
                     if (appointment != null) {
-                        fetchDoctorDetails(appointment)
+                        val firebaseKey = data.key
+                        if (firebaseKey != null) {
+                            fetchDoctorDetails(appointment, firebaseKey)
+                        }
                     }
                 }
             }
@@ -41,7 +44,7 @@ class AppointmentsRepository {
         return appointmentsLiveData
     }
 
-    private fun fetchDoctorDetails(appointment: Appointment) {
+    private fun fetchDoctorDetails(appointment: Appointment, firebaseKey: String) {
         val doctorRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors/${appointment.doctorId}")
 
@@ -61,7 +64,7 @@ class AppointmentsRepository {
 
                             val appointmentRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
                                 .getReference("appointments")
-                                .child(appointment.id.toString())
+                                .child(firebaseKey)
 
                             val updates = mapOf<String, Any>(
                                 "status" to "Completed"

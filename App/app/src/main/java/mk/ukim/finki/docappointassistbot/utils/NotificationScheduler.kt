@@ -20,8 +20,7 @@ object NotificationScheduler {
         val appointmentTime = format.parse(appointment.startTime) ?: return
 
         // Check if the appointment time is in the future
-        val currentTime = System.currentTimeMillis()
-        if (appointmentTime.time <= currentTime) {
+        if (appointment.status != "Upcoming") {
             Log.d("NotificationScheduler", "Skipping notification for past appointment: ${appointment.id}")
             return // Don't schedule notification for past appointments
         }
