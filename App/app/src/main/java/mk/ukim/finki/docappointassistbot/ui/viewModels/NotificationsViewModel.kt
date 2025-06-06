@@ -94,9 +94,10 @@ class NotificationsViewModel(
             val appointmentStatus = updatedAppointment.status
             val savedState = sharedPrefs.getBoolean(notificationId.toString(), true)
 
-            if (appointmentStatus == "Completed") {
+            if (appointmentStatus == "Completed" || appointmentStatus == "Canceled") {
                 // Remove outdated state from SharedPreferences
                 sharedPrefs.edit().remove(notificationId.toString()).apply()
+                NotificationScheduler.cancelNotification(context, notificationId)
                 // Don't add to notificationStates or reschedule
                 return
             }

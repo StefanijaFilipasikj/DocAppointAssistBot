@@ -110,7 +110,7 @@ class BookAppointmentFragment : Fragment() {
             bookedTimeSlots = snapshot.children
                 .mapNotNull { it.getValue(Appointment::class.java) }
                 .filter { it.doctorId == doctorId && it.startTime.startsWith(formattedDate) }
-                .filter { it.doctorId == doctorId }
+                .filter { it.status != "Canceled" }
                 .map { SimpleDateFormat("HH:mm a", Locale.ENGLISH)
                     .format(SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH).parse(it.startTime)!!) }
             generateTimeSlots()

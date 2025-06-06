@@ -13,8 +13,7 @@ import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModelFactory
-import java.text.SimpleDateFormat
-import java.util.Locale
+
 
 class NotificationsFragment : Fragment() {
 

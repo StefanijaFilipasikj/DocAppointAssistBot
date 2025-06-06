@@ -15,6 +15,9 @@ class BootReceiver : BroadcastReceiver() {
             for ((_, appointment) in savedAppointments) {
                 if (appointment.status == "Upcoming") {
                     NotificationScheduler.scheduleNotification(context, appointment)
+                } else {
+                    // Clean up any leftover notifications just in case
+                    NotificationScheduler.cancelNotification(context, appointment.id)
                 }
             }
 

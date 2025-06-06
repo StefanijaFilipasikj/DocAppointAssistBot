@@ -1,7 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentAppointmentsBinding
+import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 
 class AppointmentsFragment : Fragment() {
@@ -37,7 +37,9 @@ class AppointmentsFragment : Fragment() {
         noAppointmentsTextView = binding.noAppointmentsTextView
 
         viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
-        adapter = AppointmentAdapter(emptyList())
+        adapter = AppointmentAdapter(emptyList()) { appointment ->
+            onCancelAppointment(appointment)
+        }
 
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.appointmentsRecyclerView.adapter = adapter
@@ -75,13 +77,13 @@ class AppointmentsFragment : Fragment() {
         }
     }
 
-    private fun selectButton(status: TextView) {
+    private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
             setBackgroundResource(R.drawable.bg_white_radius05)
         }
 
-        if (selectedStatus != status) {
+        if (status != null && selectedStatus != status) {
             status.setTextColor(requireContext().getColor(R.color.white))
             status.setBackgroundResource(R.drawable.bg_blue500_radius05)
             selectedStatus = status
@@ -93,5 +95,10 @@ class AppointmentsFragment : Fragment() {
     private fun filterAppointments(status: String) {
         val filtered = viewModel.filterAppointments(status)
         adapter.updateAppointments(filtered)
+    }
+
+    private fun onCancelAppointment(appointment: Appointment) {
+        viewModel.cancelAppointment(requireContext(), appointment)
+        selectButton(null)
     }
 }

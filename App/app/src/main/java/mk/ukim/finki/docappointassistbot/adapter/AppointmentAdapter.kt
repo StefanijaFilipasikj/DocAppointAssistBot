@@ -1,6 +1,7 @@
 package mk.ukim.finki.docappointassistbot.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -8,7 +9,7 @@ import mk.ukim.finki.docappointassistbot.R
 import mk.ukim.finki.docappointassistbot.databinding.ItemAppointmentBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 
-class AppointmentAdapter(private var appointments: List<Appointment>) :
+class AppointmentAdapter(private var appointments: List<Appointment>, private val onCancel: (Appointment) -> Unit) :
     RecyclerView.Adapter<AppointmentAdapter.ViewHolder>() {
 
     class ViewHolder(val binding : ItemAppointmentBinding) : RecyclerView.ViewHolder(binding.root)
@@ -35,12 +36,19 @@ class AppointmentAdapter(private var appointments: List<Appointment>) :
                 if (currentItem.status.equals("Upcoming", ignoreCase = true)){
                     holder.itemView.alpha = 1.0f
                     cardView.setBackgroundResource(R.drawable.bg_white_radius10)
+
+                    binding.btnCancel.visibility = View.VISIBLE
+                    binding.btnCancel.setOnClickListener {
+                        onCancel(currentItem)
+                    }
                 }else if(currentItem.status.equals("Completed", ignoreCase = true)){
                     holder.itemView.alpha = 0.5f
                     cardView.setBackgroundResource(R.drawable.bg_blue200_radius10)
+                    binding.btnCancel.visibility = View.GONE
                 }else{ //Canceled
                     holder.itemView.alpha = 0.5f
                     cardView.setBackgroundResource(R.drawable.bg_gray300_radius10)
+                    binding.btnCancel.visibility = View.GONE
                 }
             }
         }
