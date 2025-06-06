@@ -110,4 +110,19 @@ object NotificationScheduler {
             } else null
         }.toMap()
     }
+
+
+    fun cancelAllNotifications(context: Context) {
+        val savedAppointments = getSavedNotificationStates(context)
+        for ((id, _) in savedAppointments) {
+            cancelNotification(context, id)
+        }
+
+        // Clear all shared preferences
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+
+        Log.d("NotificationScheduler", "All notifications and saved appointments cleared.")
+    }
+
 }
