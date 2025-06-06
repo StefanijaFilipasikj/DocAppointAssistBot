@@ -17,8 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
+import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +41,15 @@ class MainActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.topNavigationView)
         setSupportActionBar(toolbar)
 
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            view.setPadding(0, topInset, 0, 0)
+            insets
+        }
+
         checkNotificationAndAlarmPermissions()
+
+        AppointmentsRepository().checkAndUpdateStatusesForCurrentUser()
 
         // Bottom navigation bar
         replaceFragment(HomeFragment())

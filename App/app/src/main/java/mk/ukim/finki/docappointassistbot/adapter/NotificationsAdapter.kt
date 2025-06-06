@@ -65,10 +65,7 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
         val notification = notifications[position]
         val isChecked = notificationStates[notification.id] ?: true
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
-
-        val time = dateFormat.parse(notification.appointment.startTime)?.time ?: 0L
-        val isPast = time <= System.currentTimeMillis()
+        val isPast = notification.appointment.status == "Completed"
 
         holder.bind(notification, isChecked, isPast, onNotificationStateChanged)
     }

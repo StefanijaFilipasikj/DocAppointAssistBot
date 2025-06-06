@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -16,6 +17,7 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentBookAppointmentBind
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
+import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -108,7 +110,7 @@ class BookAppointmentFragment : Fragment() {
             bookedTimeSlots = snapshot.children
                 .mapNotNull { it.getValue(Appointment::class.java) }
                 .filter { it.doctorId == doctorId && it.startTime.startsWith(formattedDate) }
-                .filter { it.doctorId == doctorId }
+                .filter { it.status != "Canceled" }
                 .map { SimpleDateFormat("HH:mm a", Locale.ENGLISH)
                     .format(SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH).parse(it.startTime)!!) }
             generateTimeSlots()
@@ -165,11 +167,19 @@ class BookAppointmentFragment : Fragment() {
                     doctor = doctor
                 )
 
+                val now = Date()
+                val appointmentTime = timeFormat.parse(startTime)
+
+                if (appointmentTime != null && appointmentTime.before(now)){
+                    appointment.status = "Completed"
+                }
+
                 firebaseRef.child("appointments").push().setValue(appointment)
                     .addOnSuccessListener {
                         Toast.makeText(requireContext(), "Appointment booked!", Toast.LENGTH_SHORT).show()
 
                         NotificationScheduler.scheduleNotification(requireContext(), appointment)
+
                     }
                     .addOnFailureListener {
                         Toast.makeText(requireContext(), "Failed to book!", Toast.LENGTH_SHORT).show()
@@ -180,6 +190,10 @@ class BookAppointmentFragment : Fragment() {
                     .replace(R.id.frameLayout, fragment)
                     .addToBackStack(null)
                     .commit()
+
+                val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+                bottomNav.selectedItemId = R.id.appointments
+
             } else {
                 Toast.makeText(requireContext(), "Doctor not found!", Toast.LENGTH_SHORT).show()
             }

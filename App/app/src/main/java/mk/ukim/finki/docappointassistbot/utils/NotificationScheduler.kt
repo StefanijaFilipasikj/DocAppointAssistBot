@@ -20,8 +20,7 @@ object NotificationScheduler {
         val appointmentTime = format.parse(appointment.startTime) ?: return
 
         // Check if the appointment time is in the future
-        val currentTime = System.currentTimeMillis()
-        if (appointmentTime.time <= currentTime) {
+        if (appointment.status != "Upcoming") {
             Log.d("NotificationScheduler", "Skipping notification for past appointment: ${appointment.id}")
             return // Don't schedule notification for past appointments
         }
@@ -34,7 +33,7 @@ object NotificationScheduler {
         val doctorName = appointment.doctor?.fullname ?: "Unknown Doctor"
 
         val intent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra("appointmentId", appointment.id.toString())
+            putExtra("appointmentId", appointment.id)
             putExtra("doctorName", doctorName)
             putExtra("appointmentTime", appointment.startTime)
         }
@@ -88,6 +87,12 @@ object NotificationScheduler {
 
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().remove("appointment_$appointmentId").apply()
+
+        // Also remove the toggle state from notification preferences
+        val togglePrefs = context.getSharedPreferences("notification_prefs", Context.MODE_PRIVATE)
+        togglePrefs.edit().remove(appointmentId.toString()).apply()
+
+        Log.d("NotificationScheduler", "Removed toggle for appointment ID: $appointmentId from notification_prefs")
     }
 
     private fun saveAppointment(context: Context, appointment: Appointment) {
@@ -111,4 +116,19 @@ object NotificationScheduler {
             } else null
         }.toMap()
     }
+
+
+    fun cancelAllNotifications(context: Context) {
+        val savedAppointments = getSavedNotificationStates(context)
+        for ((id, _) in savedAppointments) {
+            cancelNotification(context, id)
+        }
+
+        // Clear all shared preferences
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+
+        Log.d("NotificationScheduler", "All notifications and saved appointments cleared.")
+    }
+
 }

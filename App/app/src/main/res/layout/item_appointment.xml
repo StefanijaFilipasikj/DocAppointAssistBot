@@ -8,55 +8,87 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:padding="12dp">
 
+        <!-- Doctor Image -->
         <ImageView
             android:id="@+id/doctorImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/doctor_image"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@drawable/ic_launcher_foreground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <LinearLayout
-            android:orientation="vertical"
+        <!-- Cancel Icon Button -->
+        <ImageButton
+            android:id="@+id/btnCancel"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="@string/cancel_appointment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="@android:color/holo_red_dark" />
+
+
+        <!-- Doctor Full Name -->
+        <TextView
+            android:id="@+id/tvDoctorFullName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/gray_900"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/doctorImage"
+            app:layout_constraintEnd_toStartOf="@id/btnCancel"
+            app:layout_constraintTop_toTopOf="@id/doctorImage" />
 
-            <TextView
-                android:id="@+id/tvDoctorFullName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/gray_900"/>
+        <!-- Specialty -->
+        <TextView
+            android:id="@+id/tvSpecialty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/doctorImage"
+            app:layout_constraintTop_toBottomOf="@id/tvDoctorFullName"
+            app:layout_constraintEnd_toStartOf="@id/btnCancel" />
 
-            <TextView
-                android:id="@+id/tvSpecialty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"/>
+        <!-- Hospital -->
+        <TextView
+            android:id="@+id/tvHospital"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/doctorImage"
+            app:layout_constraintTop_toBottomOf="@id/tvSpecialty"
+            app:layout_constraintEnd_toStartOf="@id/btnCancel" />
 
-            <TextView
-                android:id="@+id/tvHospital"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"/>
+        <!-- Appointment DateTime -->
+        <TextView
+            android:id="@+id/tvAppointmentDateTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/doctorImage"
+            app:layout_constraintTop_toBottomOf="@id/tvHospital"
+            app:layout_constraintEnd_toStartOf="@id/btnCancel"
+            app:layout_constraintBottom_toBottomOf="@id/doctorImage" />
 
-            <TextView
-                android:id="@+id/tvAppointmentDateTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

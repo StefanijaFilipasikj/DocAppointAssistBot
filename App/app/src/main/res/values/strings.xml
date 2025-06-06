@@ -47,4 +47,5 @@
     <string name="no_upcoming_notifications">No upcoming notifications</string>
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="no_scheduled_appointments">No scheduled appointments</string>
+    <string name="cancel_appointment">Cancel Appointment</string>
 </resources>

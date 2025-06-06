@@ -13,8 +13,7 @@ import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModelFactory
-import java.text.SimpleDateFormat
-import java.util.Locale
+
 
 class NotificationsFragment : Fragment() {
 
@@ -57,16 +56,12 @@ class NotificationsFragment : Fragment() {
         upcomingRecyclerView.adapter = upcomingAdapter
         recentRecyclerView.adapter = recentAdapter
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
-
         val upcoming = viewModel.notifications.value?.filter {
-            val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
-            startTime > System.currentTimeMillis()
+            it.appointment.status == "Upcoming"
         }
 
         val recent = viewModel.notifications.value?.filter {
-            val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
-            startTime <= System.currentTimeMillis()
+            it.appointment.status == "Completed"
         }
 
         noUpcomingNotificationsText.visibility = if (upcoming.isNullOrEmpty()) View.VISIBLE else View.GONE
@@ -74,13 +69,11 @@ class NotificationsFragment : Fragment() {
 
         viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
             val upcomingNotifications = notifications.filter {
-                val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
-                startTime > System.currentTimeMillis()
+                it.appointment.status == "Upcoming"
             }
 
             val recentNotifications = notifications.filter {
-                val startTime = dateFormat.parse(it.appointment.startTime)?.time ?: 0L
-                startTime <= System.currentTimeMillis()
+                it.appointment.status == "Completed"
             }
 
             noUpcomingNotificationsText.visibility = if (upcomingNotifications.isEmpty()) View.VISIBLE else View.GONE

@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot.ui.viewModels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,4 +26,11 @@ class AppointmentsViewModel : ViewModel() {
     fun filterAppointments(status: String): List<Appointment> {
         return repository.filterAppointments(status)
     }
+
+    fun cancelAppointment(context: Context, appointment: Appointment) {
+        repository.cancelAppointment(context, appointment).observeForever { updatedAppointments ->
+            _appointments.value = updatedAppointments
+        }
+    }
+
 }

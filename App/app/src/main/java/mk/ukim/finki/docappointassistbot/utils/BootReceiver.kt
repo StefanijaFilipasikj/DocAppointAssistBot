@@ -13,8 +13,14 @@ class BootReceiver : BroadcastReceiver() {
             val savedAppointments = NotificationScheduler.getSavedNotificationStates(context)
 
             for ((_, appointment) in savedAppointments) {
-                NotificationScheduler.scheduleNotification(context, appointment)
+                if (appointment.status == "Upcoming") {
+                    NotificationScheduler.scheduleNotification(context, appointment)
+                } else {
+                    // Clean up any leftover notifications just in case
+                    NotificationScheduler.cancelNotification(context, appointment.id)
+                }
             }
+
         }
     }
 }
