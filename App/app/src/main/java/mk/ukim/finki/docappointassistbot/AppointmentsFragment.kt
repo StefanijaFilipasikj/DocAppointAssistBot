@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentAppointmentsBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
@@ -44,7 +45,9 @@ class AppointmentsFragment : Fragment() {
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.appointmentsRecyclerView.adapter = adapter
 
-        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty()) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty() || user == null) {
             View.VISIBLE
         } else {
             View.GONE
