@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
@@ -64,8 +65,10 @@ class NotificationsFragment : Fragment() {
             it.appointment.status == "Completed"
         }
 
-        noUpcomingNotificationsText.visibility = if (upcoming.isNullOrEmpty()) View.VISIBLE else View.GONE
-        noRecentNotificationsText.visibility = if (recent.isNullOrEmpty()) View.VISIBLE else View.GONE
+        val user = FirebaseAuth.getInstance().currentUser
+
+        noUpcomingNotificationsText.visibility = if (upcoming.isNullOrEmpty() || user == null) View.VISIBLE else View.GONE
+        noRecentNotificationsText.visibility = if (recent.isNullOrEmpty() || user == null) View.VISIBLE else View.GONE
 
         viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
             val upcomingNotifications = notifications.filter {
