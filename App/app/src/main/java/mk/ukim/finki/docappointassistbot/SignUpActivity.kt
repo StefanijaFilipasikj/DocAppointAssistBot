@@ -1,11 +1,13 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import mk.ukim.finki.docappointassistbot.databinding.ActivitySignUpBinding
 
 class SignUpActivity : AppCompatActivity() {
@@ -51,10 +53,21 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    val user = auth.currentUser
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(binding.fullNameEditText.text.toString())
+                        .setPhotoUri(Uri.parse(binding.photoUrlEditText.text.toString()))
+                        .build()
+
+                    user?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener(this) { updateProfileTask ->
+                            if(updateProfileTask.isSuccessful){
+                                Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }else {
+                                Toast.makeText(this, "Sign-up failed: ${updateProfileTask.exception?.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
                 } else {
                     Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }

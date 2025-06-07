@@ -21,7 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DocAppointAssistBot"
         tools:targetApi="31" >
-
+        <activity
+            android:name=".ChangeProfileActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".utils.NotificationReceiver"

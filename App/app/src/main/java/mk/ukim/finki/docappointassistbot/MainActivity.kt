@@ -5,6 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +23,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
@@ -74,6 +80,30 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_nav, menu)
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val user = FirebaseAuth.getInstance().currentUser
+        val loginItem = menu.findItem(R.id.login)
+
+        loginItem.setIcon(R.drawable.ic_baseline_user_24)
+        user?.let {
+            Glide.with(this)
+                .asBitmap()
+                .load(it.photoUrl)
+                .placeholder(R.drawable.ic_baseline_user_24)
+                .circleCrop()
+                .into(object : CustomTarget<Bitmap>(64, 64) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        val drawable = BitmapDrawable(resources, resource)
+                        loginItem.icon = drawable
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
