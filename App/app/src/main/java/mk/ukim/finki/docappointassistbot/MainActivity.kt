@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 
@@ -78,8 +79,14 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.login -> {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
+                val user = FirebaseAuth.getInstance().currentUser
+                if (user != null) {
+                    val intent = Intent(this, UserInfoActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                }
             }
 
             R.id.notifications -> replaceFragment(NotificationsFragment())

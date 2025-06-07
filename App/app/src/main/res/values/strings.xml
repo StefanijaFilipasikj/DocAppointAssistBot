@@ -48,4 +48,10 @@
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="no_scheduled_appointments">No scheduled appointments</string>
     <string name="cancel_appointment">Cancel Appointment</string>
+    <string name="user_avatar">User Avatar</string>
+    <string name="user_profile">User Profile</string>
+    <string name="sign_out_icon">Sign Out Icon</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="username_johndoe">Username: JohnDoe</string>
+    <string name="date_created_01_01_2020">Date Created: 01/01/2020</string>
 </resources>
