@@ -59,4 +59,6 @@
     <string name="email_johndoe">Email: JohnDoe</string>
     <string name="username_johndoe">Username: JohnDoe</string>
     <string name="date_created_01_01_2020">Date Created: 01/01/2020</string>
+    <string name="write_message_here">Write message here</string>
+    <string name="google_firebase_token">373225760484-bugb5apjjqujrobkenl1hgi45k0ovacj.apps.googleusercontent.com</string>
 </resources>
