@@ -1,10 +1,16 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import mk.ukim.finki.docappointassistbot.adapter.ChatRecyclerAdapter
@@ -12,6 +18,7 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentChatbotBinding
 import mk.ukim.finki.docappointassistbot.domain.MessagesModel
 import mk.ukim.finki.docappointassistbot.domain.enums.ChatRole
 import mk.ukim.finki.docappointassistbot.ui.viewModels.MessagesViewModel
+import java.util.Locale
 
 class ChatbotFragment : Fragment() {
 
@@ -20,6 +27,18 @@ class ChatbotFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatRecyclerAdapter
     private lateinit var viewModel: MessagesViewModel
+
+    private val speechRecognizerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val resultList = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            resultList?.get(0)?.let { spokenText ->
+                viewModel.addMessage(MessagesModel(spokenText, ChatRole.USER))
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,8 +62,25 @@ class ChatbotFragment : Fragment() {
             binding.chatMessageInput.setText("")
         }
 
+        binding.btnMic.setOnClickListener {
+            startSpeechToText()
+        }
+
         viewModel.messages.observe(viewLifecycleOwner) { messages ->
             chatAdapter.updateMessages(messages)
+        }
+    }
+
+    private fun startSpeechToText() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        }
+
+        try {
+            speechRecognizerLauncher.launch(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "Speech recognition not supported", Toast.LENGTH_SHORT).show()
         }
     }
 }
