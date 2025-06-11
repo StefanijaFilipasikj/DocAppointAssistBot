@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentAppointmentsBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
@@ -24,11 +25,16 @@ class AppointmentsFragment : Fragment() {
     private var selectedStatus: TextView? = null
     private lateinit var noAppointmentsTextView: TextView
 
+    private lateinit var database: DatabaseReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAppointmentsBinding.inflate(inflater, container, false)
+
+        database = FirebaseDatabase.getInstance().getReference("users")
+
         return binding.root
     }
 
@@ -47,10 +53,10 @@ class AppointmentsFragment : Fragment() {
 
         val user = FirebaseAuth.getInstance().currentUser
 
-        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty() || user == null) {
-            View.VISIBLE
+        if (user != null) {
+            checkUserRoleAndLoadAppointments(user.uid)
         } else {
-            View.GONE
+            noAppointmentsTextView.visibility = View.VISIBLE
         }
 
         viewModel.appointments.observe(viewLifecycleOwner) { appointments ->
@@ -80,6 +86,36 @@ class AppointmentsFragment : Fragment() {
         }
     }
 
+    private fun checkUserRoleAndLoadAppointments(userId: String) {
+        database.child(userId).child("role").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val role = snapshot.getValue(String::class.java)
+                if (role == "doctor") {
+                    showDoctorAppointmentsPlaceholder()
+                } else {
+                    setupPatientAppointments()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                noAppointmentsTextView.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    private fun showDoctorAppointmentsPlaceholder() {
+        binding.doctorAppointmentsTextView.text = getString(R.string.doctor_appointments_will_appear_here)
+        binding.doctorAppointmentsTextView.visibility = View.VISIBLE
+    }
+
+    private fun setupPatientAppointments() {
+        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
     private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
@@ -97,11 +133,23 @@ class AppointmentsFragment : Fragment() {
 
     private fun filterAppointments(status: String) {
         val filtered = viewModel.filterAppointments(status)
+        if (filtered.isEmpty()) {
+            noAppointmentsTextView.visibility = View.VISIBLE
+            binding.appointmentsRecyclerView.visibility = View.GONE
+        } else {
+            noAppointmentsTextView.visibility = View.GONE
+            binding.appointmentsRecyclerView.visibility = View.VISIBLE
+        }
         adapter.updateAppointments(filtered)
     }
 
     private fun onCancelAppointment(appointment: Appointment) {
         viewModel.cancelAppointment(requireContext(), appointment)
         selectButton(null)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

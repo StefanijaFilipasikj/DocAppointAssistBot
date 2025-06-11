@@ -77,11 +77,24 @@
         android:layout_marginTop="20dp"
         android:layout_below="@+id/tabsLayout"/>
 
+    <TextView
+        android:id="@+id/doctorAppointmentsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/doctor_appointments_will_appear_here"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/tabsLayout"/>
+
     <!-- RecyclerView for appointments -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appointmentsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tabsLayout"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:contentDescription="@string/appointments_list"/>
 </RelativeLayout>

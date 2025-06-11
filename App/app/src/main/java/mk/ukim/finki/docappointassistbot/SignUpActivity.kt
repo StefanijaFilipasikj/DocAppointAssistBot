@@ -7,8 +7,11 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import mk.ukim.finki.docappointassistbot.databinding.ActivitySignUpBinding
+import mk.ukim.finki.docappointassistbot.domain.User
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -62,6 +65,7 @@ class SignUpActivity : AppCompatActivity() {
                     user?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener(this) { updateProfileTask ->
                             if(updateProfileTask.isSuccessful){
+                                saveUserToDatabaseIfNotExists(user)
                                 Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show()
                                 finish()
                             }else {
@@ -72,5 +76,25 @@ class SignUpActivity : AppCompatActivity() {
                     Toast.makeText(this, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
+    }
+
+    private fun saveUserToDatabaseIfNotExists(firebaseUser: FirebaseUser?) {
+        firebaseUser?.let { user ->
+            val ref = FirebaseDatabase.getInstance().getReference("users").child(user.uid)
+
+            ref.get().addOnSuccessListener { snapshot ->
+                if (!snapshot.exists()) {
+                    val newUser = User(
+                        id = user.uid.hashCode(),
+                        email = user.email ?: "",
+                        fullName = user.displayName ?: "",
+                        photoUrl = user.photoUrl?.toString() ?: "",
+                        dateCreated = System.currentTimeMillis(),
+                        role = "patient"
+                    )
+                    ref.setValue(newUser)
+                }
+            }
+        }
     }
 }
