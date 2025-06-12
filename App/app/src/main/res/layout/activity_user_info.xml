@@ -76,4 +76,17 @@
         android:textColor="@android:color/white"
         android:layout_gravity="center"/>
 
+    <Button
+        android:id="@+id/requestDoctorButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@color/blue_500"
+        android:text="@string/send_doctor_request"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center"/>
+
+
 </LinearLayout>

@@ -64,14 +64,17 @@ class DoctorDetailsFragment : Fragment() {
                 val doctor = snapshot.getValue(Doctor::class.java)
 
                 doctor?.let {
-                    fetchHospitals(it.hospitalIds ?: emptyList()) { hospitals ->
-                        it.hospitals = hospitals
+                    if (it.hospitalId != null) {
+                        fetchHospital(it.hospitalId) { hospital ->
+                            it.hospital = hospital
 
-                        fetchWorkHours(it.workHourIds ?: emptyList()) { workHours ->
-                            it.workHours = workHours
-                            updateUI(it)
+                            fetchWorkHours(it.workHourIds ?: emptyList()) { workHours ->
+                                it.workHours = workHours
+                                updateUI(it)
+                            }
                         }
                     }
+
                 }
             } else {
                 Toast.makeText(requireContext(), "Doctor not found", Toast.LENGTH_SHORT).show()
@@ -81,22 +84,20 @@ class DoctorDetailsFragment : Fragment() {
         }
     }
 
-    private fun fetchHospitals(hospitalIds: List<Int>, callback: (List<Hospital>) -> Unit) {
-        val hospitals = mutableListOf<Hospital>()
+    private fun fetchHospital(hospitalId: Int, callback: (Hospital?) -> Unit) {
         val hospitalRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("hospitals")
+            .child(hospitalId.toString())
 
-        hospitalIds.forEach { hospitalId ->
-            hospitalRef.child(hospitalId.toString()).get().addOnSuccessListener { snapshot ->
-                snapshot.getValue(Hospital::class.java)?.let { hospitals.add(it) }
-
-                if (hospitals.size == hospitalIds.size) {
-                    callback(hospitals)
-                }
-            }
+        hospitalRef.get().addOnSuccessListener { snapshot ->
+            val hospital = snapshot.getValue(Hospital::class.java)
+            callback(hospital)
+        }.addOnFailureListener {
+            callback(null)
         }
     }
+
 
     private fun fetchWorkHours(workHourIds: List<Int>, callback: (List<WorkHours>) -> Unit) {
         val workHours = mutableListOf<WorkHours>()
@@ -152,10 +153,8 @@ class DoctorDetailsFragment : Fragment() {
         binding.tvSchedule.text = workHoursText
 
         binding.tvCityAndCountry.text = "${doctor.city}, ${doctor.country}"
-        val hospitalsText = doctor.hospitals?.joinToString("\n") {
-            "•  ${it.name}"
-        }
-        binding.tvHospitals.text = hospitalsText
+        binding.tvHospitals.text = doctor.hospital?.name ?: "Unknown hospital"
+
 
         binding.btnBookAppointment.setOnClickListener {
             val bookAppointmentFragment = BookAppointmentFragment()

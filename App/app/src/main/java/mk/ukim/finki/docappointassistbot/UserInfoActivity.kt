@@ -74,5 +74,10 @@ class UserInfoActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        binding.requestDoctorButton.setOnClickListener {
+            val intent = Intent(this, DoctorRequestActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

@@ -31,7 +31,7 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
             val appointment = notification.appointment
             val doctor = appointment.doctor
             title.text = appointment.startTime
-            val hospitalName = doctor?.hospitals?.firstOrNull()?.name ?: "Unknown Hospital"
+            val hospitalName = doctor?.hospital?.name ?: "Unknown Hospital"
             subtitle.text = "${doctor?.fullname} | ${doctor?.specialty} | $hospitalName"
 
             // Set the notification icon

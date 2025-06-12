@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 
@@ -38,10 +39,11 @@ class MainActivity : AppCompatActivity() {
     private val NOTIFICATION_PERMISSION = android.Manifest.permission.POST_NOTIFICATIONS
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
 
+    private var isAdmin = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -58,8 +60,24 @@ class MainActivity : AppCompatActivity() {
 
         AppointmentsRepository().checkAndUpdateStatusesForCurrentUser()
 
-        // Bottom navigation bar
-        replaceFragment(HomeFragment())
+        checkIfAdmin { admin ->
+            isAdmin = admin
+            setupBottomNavigation()
+            invalidateOptionsMenu() // refresh top menu
+        }
+
+        createNotificationChannel()
+    }
+
+    private fun setupBottomNavigation() {
+        if (isAdmin) {
+            binding.bottomNavigationView.menu.clear()
+            binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
+            replaceFragment(AdminRequestsFragment())
+        } else {
+            replaceFragment(HomeFragment())
+        }
+
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> replaceFragment(HomeFragment())
@@ -67,26 +85,26 @@ class MainActivity : AppCompatActivity() {
                 R.id.chatbot -> replaceFragment(ChatbotFragment())
                 R.id.appointments -> replaceFragment(AppointmentsFragment())
                 R.id.settings -> replaceFragment(SettingsFragment())
-                else -> {}
+                R.id.requests -> replaceFragment(AdminRequestsFragment())
             }
             true
         }
-
-        createNotificationChannel()
-
     }
 
-    // Top navigation bar
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_nav, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        if (isAdmin) {
+            menu.findItem(R.id.notifications)?.isVisible = false
+        }
+
         val user = FirebaseAuth.getInstance().currentUser
         val loginItem = menu.findItem(R.id.login)
-
         loginItem.setIcon(R.drawable.ic_baseline_user_24)
+
         user?.let {
             Glide.with(this)
                 .asBitmap()
@@ -95,12 +113,10 @@ class MainActivity : AppCompatActivity() {
                 .circleCrop()
                 .into(object : CustomTarget<Bitmap>(64, 64) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        val drawable = BitmapDrawable(resources, resource)
-                        loginItem.icon = drawable
+                        loginItem.icon = BitmapDrawable(resources, resource)
                     }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {}
                 })
         }
         return super.onPrepareOptionsMenu(menu)
@@ -109,27 +125,26 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.login -> {
-                val user = FirebaseAuth.getInstance().currentUser
-                if (user != null) {
-                    val intent = Intent(this, UserInfoActivity::class.java)
-                    startActivity(intent)
+                val intent = if (FirebaseAuth.getInstance().currentUser != null) {
+                    Intent(this, UserInfoActivity::class.java)
                 } else {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
+                    Intent(this, LoginActivity::class.java)
                 }
+                startActivity(intent)
             }
 
-            R.id.notifications -> replaceFragment(NotificationsFragment())
-            else -> {}
+            R.id.notifications -> {
+                replaceFragment(NotificationsFragment())
+            }
         }
         return true
     }
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frameLayout, fragment)
-        fragmentTransaction.commit()
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.frameLayout, fragment)
+        transaction.commit()
     }
 
     private fun checkNotificationAndAlarmPermissions() {
@@ -157,54 +172,36 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Permissions Required")
             .setMessage(message)
             .setPositiveButton("Grant Permissions") { _, _ ->
-                // Open the App Settings page
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", packageName, null)
-                }
-                startActivity(intent)
-
-                // Guide user to the alarm settings
+                })
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val alarmIntent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                    startActivity(alarmIntent)
+                    startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-
-    // Ask for POST_NOTIFICATIONS permission directly
     override fun onResume() {
         super.onResume()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, NOTIFICATION_PERMISSION) != android.content.pm.PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(NOTIFICATION_PERMISSION),
-                NOTIFICATION_PERMISSION_REQUEST_CODE
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(NOTIFICATION_PERMISSION), NOTIFICATION_PERMISSION_REQUEST_CODE)
         }
     }
 
-    // Handle permission request result (for POST_NOTIFICATIONS)
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with scheduling notifications/alarms
-            } else {
-                // Permission denied, inform the user
-                AlertDialog.Builder(this)
-                    .setTitle("Permission Denied")
-                    .setMessage("Without this permission, the app cannot send notifications or reminders.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE &&
+            grantResults.isNotEmpty() && grantResults[0] != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            AlertDialog.Builder(this)
+                .setTitle("Permission Denied")
+                .setMessage("Without this permission, the app cannot send notifications or reminders.")
+                .setPositiveButton("OK", null)
+                .show()
         }
     }
 
@@ -226,4 +223,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // ✅ Updated: Check if current user is admin using Realtime Database
+    private fun checkIfAdmin(callback: (Boolean) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val database = FirebaseDatabase.getInstance()
+            val userRef = database.getReference("users").child(user.uid)
+
+            userRef.get()
+                .addOnSuccessListener { snapshot ->
+                    val role = snapshot.child("role").getValue(String::class.java)
+                    callback(role == "admin")
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
+        }
+    }
 }

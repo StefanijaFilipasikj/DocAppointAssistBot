@@ -61,4 +61,18 @@
     <string name="date_created_01_01_2020">Date Created: 01/01/2020</string>
     <string name="doctor_appointments_will_appear_here">Doctor appointments will appear here</string>
     <string name="appointments_list">Appointments list</string>
+    <string name="send_doctor_request">Send Doctor request</string>
+    <string name="hospital">Hospital:</string>
+    <string name="photo_url">Photo Url</string>
+    <string name="doctor_role_request">Doctor Role Request</string>
+    <string name="city">City</string>
+    <string name="country">Country</string>
+    <string name="specialty">Specialty</string>
+    <string name="bio">Bio</string>
+    <string name="experience_in_years">Experience (in years)</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="upload_cv_pdf">Upload CV (PDF)</string>
+    <string name="submit_request">Submit Request</string>
+    <string name="select_available_work_hours">Select Available Work Hours:</string>
+    <string name="requests">Requests</string>
 </resources>
