@@ -32,11 +32,11 @@ class ChatRecyclerAdapter(private var messages: List<MessagesModel>) :
                 if (currentItem.role == ChatRole.CHATBOT) {
                     rightChatLayout.visibility = View.GONE
                     leftChatLayout.visibility = View.VISIBLE
-                    leftChatTextView.text = currentItem.message
+                    leftChatTextView.text = currentItem.content
                 } else {
                     leftChatLayout.visibility = View.GONE;
                     rightChatLayout.visibility = View.VISIBLE;
-                    rightChatTextView.text = currentItem.message
+                    rightChatTextView.text = currentItem.content
                 }
             }
         }

@@ -11,18 +11,30 @@ class MessagesViewModel : ViewModel() {
     private val _messages = MutableLiveData<List<MessagesModel>>()
     val messages: LiveData<List<MessagesModel>> get() = _messages
 
+    init {
+        _messages.value = listOf(
+            MessagesModel(
+                content = "Welcome! How can I assist you today?",
+                role = ChatRole.CHATBOT
+            )
+        )
+    }
+
     fun addMessage(message: MessagesModel){
         val currentList = _messages.value.orEmpty()
         _messages.value = currentList + message
     }
 
-    init {
-        _messages.value = listOf(
-            MessagesModel(
-                message = "Welcome! How can I assist you today?",
-                role = ChatRole.CHATBOT
-            )
-        )
+    fun addOrUpdateMessage(contentChunk: String) {
+        val currentMessages = _messages.value.orEmpty()
+        val lastMessage = currentMessages.lastOrNull()
+
+        if (lastMessage != null && lastMessage.role == ChatRole.CHATBOT) {
+            val updated = lastMessage.copy(content = lastMessage.content + contentChunk)
+            _messages.value = currentMessages.dropLast(1) + updated
+        } else {
+            _messages.value = currentMessages + MessagesModel(contentChunk, ChatRole.CHATBOT)
+        }
     }
 
 }

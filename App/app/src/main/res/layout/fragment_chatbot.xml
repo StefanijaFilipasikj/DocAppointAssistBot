@@ -16,6 +16,7 @@
             android:layout_height="match_parent"
             android:padding="8dp"
             android:clipToPadding="false"
+            android:layout_marginBottom="80dp"
             tools:listitem="@layout/chat_message_recycler_row" />
 
         <RelativeLayout

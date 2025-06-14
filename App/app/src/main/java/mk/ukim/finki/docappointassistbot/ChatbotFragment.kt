@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognizerIntent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,11 +15,24 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.adapter.ChatRecyclerAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentChatbotBinding
 import mk.ukim.finki.docappointassistbot.domain.MessagesModel
 import mk.ukim.finki.docappointassistbot.domain.enums.ChatRole
 import mk.ukim.finki.docappointassistbot.ui.viewModels.MessagesViewModel
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 import java.util.Locale
 
 class ChatbotFragment : Fragment() {
@@ -68,6 +83,10 @@ class ChatbotFragment : Fragment() {
 
         viewModel.messages.observe(viewLifecycleOwner) { messages ->
             chatAdapter.updateMessages(messages)
+            if (messages[messages.size - 1].role == ChatRole.USER){
+                val jsonRequestBody = buildJsonRequestBody(messages)
+                streamChatResponse(jsonRequestBody)
+            }
         }
     }
 
@@ -82,5 +101,54 @@ class ChatbotFragment : Fragment() {
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(requireContext(), "Speech recognition not supported", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun streamChatResponse(jsonRequestBody: String) {
+        val client = OkHttpClient()
+
+        val requestBody = jsonRequestBody.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+        val request = Request.Builder()
+            .url("http://10.0.2.2:8000/chat")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val handler = Handler(Looper.getMainLooper())
+                val reader = BufferedReader(InputStreamReader(response.body!!.byteStream()))
+                var line: String?
+
+                while (reader.readLine().also { line = it } != null) {
+                    val textChunk = line ?: ""
+                    handler.post {
+                        viewModel.addOrUpdateMessage(textChunk)
+                    }
+                }
+
+                reader.close()
+            }
+        })
+    }
+
+    fun buildJsonRequestBody(messages: List<MessagesModel>): String {
+        val user = FirebaseAuth.getInstance().currentUser
+        val json = JSONObject()
+        val messagesArray = JSONArray()
+
+        for (msg in messages) {
+            val msgObject = JSONObject()
+            msgObject.put("content", msg.content)
+            msgObject.put("role", msg.role.name)
+            messagesArray.put(msgObject)
+        }
+
+        json.put("messages", messagesArray)
+        json.put("role", "patient")
+        json.put("patient_id", user?.uid)
+        return json.toString()
     }
 }

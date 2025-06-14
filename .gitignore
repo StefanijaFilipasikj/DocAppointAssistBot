@@ -34,3 +34,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Python Chatbot
+.venv
+chroma_medembed_db*
+.env
+__pycache__
