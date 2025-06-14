@@ -64,4 +64,19 @@
     <string name="upcoming_appointments">Upcoming Appointments</string>
     <string name="browse_doctors_by_specialty">Browse Doctors by Specialty</string>
     <string name="see_all">See All</string>
+    <string name="receive_updates_and_alerts">Receive updates and alerts</string>
+    <string name="current_location">Current Location</string>
+    <string name="allow_access_to_your_location">Allow access to your location</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="view_the_app_in_dark_mode">View the app in dark mode</string>
+    <string name="language">Language</string>
+    <string name="choose_your_preferred_language">Choose your preferred language</string>
+    <string name="switch_account">Switch account</string>
+    <string name="booking">Booking</string>
+
+    <string-array name="languages">
+        <item>EN</item>
+        <item>MK</item>
+        <item>FR</item>
+    </string-array>
 </resources>

@@ -17,7 +17,6 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentBookAppointmentBind
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
-import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -54,7 +53,7 @@ class BookAppointmentFragment : Fragment() {
 
         doctorId = arguments?.getInt("doctor_id") ?: 0
         val doctorName = arguments?.getString("doctor_name") ?: "Unknown Doctor"
-        binding.tvDoctorFullName.text = "Booking: $doctorName"
+        binding.tvDoctorFullName.text = "${getString(R.string.booking)} ${doctorName}"
 
         timeSlotAdapter = TimeSlotAdapter { time -> selectedTime = time }
         binding.rvTimeSlots.layoutManager = GridLayoutManager(requireContext(), 3)
@@ -75,6 +74,11 @@ class BookAppointmentFragment : Fragment() {
                 Toast.makeText(requireContext(), "Select a time slot", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun fetchWorkHours(dayOfWeek: String) {

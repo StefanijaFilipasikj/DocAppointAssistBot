@@ -63,7 +63,7 @@ class TimeSlotAdapter(private val onItemClick: (String) -> Unit) :
                     itemView.setBackgroundResource(R.drawable.bg_gray500_radius10)
                 }
                 isSelected -> {
-                    tvTimeSlot.setTextColor(itemView.context.getColor(R.color.white))
+                    tvTimeSlot.setTextColor(itemView.context.getColor(R.color.gray_000))
                     itemView.setBackgroundResource(R.drawable.bg_blue500_radius10)
                 }
                 else -> {

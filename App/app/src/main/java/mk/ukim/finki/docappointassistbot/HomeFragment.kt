@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -40,7 +39,7 @@ class HomeFragment : Fragment() {
         val user = FirebaseAuth.getInstance().currentUser
 
         // Chatbot
-        binding.textHello.text = "Hello ${user?.displayName}"
+        binding.textHello.text = "${getString(R.string.hello)} ${user?.displayName ?: ""}"
         binding.cardChatWithChatbot.setOnClickListener {
             replaceFragment(ChatbotFragment())
         }
@@ -93,6 +92,11 @@ class HomeFragment : Fragment() {
         //doctorsNearbyAdapter = DoctorAdapter()
         //binding.recyclerDoctorsNearby.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         //binding.recyclerDoctorsNearby.adapter = doctorsNearbyAdapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun replaceFragment(fragment: Fragment) {
