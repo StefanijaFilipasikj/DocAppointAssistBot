@@ -9,7 +9,9 @@ import mk.ukim.finki.docappointassistbot.R
 import mk.ukim.finki.docappointassistbot.databinding.ItemAppointmentBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 
-class AppointmentAdapter(private var appointments: List<Appointment>, private val onCancel: (Appointment) -> Unit) :
+class AppointmentAdapter(private var appointments: List<Appointment>,
+                         private val onCancel: (Appointment) -> Unit,
+                         private val onClick: (Appointment) -> Unit) :
     RecyclerView.Adapter<AppointmentAdapter.ViewHolder>() {
 
     class ViewHolder(val binding : ItemAppointmentBinding) : RecyclerView.ViewHolder(binding.root)
@@ -32,6 +34,10 @@ class AppointmentAdapter(private var appointments: List<Appointment>, private va
                     .centerCrop()
                     .placeholder(R.drawable.ic_launcher_background)
                     .into(doctorImage)
+
+                binding.cardView.setOnClickListener {
+                    onClick(currentItem)
+                }
 
                 if (currentItem.status.equals("Upcoming", ignoreCase = true)){
                     holder.itemView.alpha = 1.0f

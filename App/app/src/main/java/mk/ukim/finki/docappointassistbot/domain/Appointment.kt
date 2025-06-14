@@ -8,4 +8,5 @@ data class Appointment(
     val endTime: String = "",
     var status: String = "",
     var doctor: Doctor? = null,
+    var details: String? = ""
 )

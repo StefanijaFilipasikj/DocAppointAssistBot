@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +19,7 @@ import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
 import mk.ukim.finki.docappointassistbot.adapter.SpecialtyAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentHomeBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
+import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 
 class HomeFragment : Fragment() {
 
@@ -25,6 +28,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var appointmentsAdapter: AppointmentAdapter
     //private lateinit var doctorsNearbyAdapter: DoctorAdapter
+    private lateinit var viewModel: AppointmentsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,9 +52,12 @@ class HomeFragment : Fragment() {
         if (user != null) {
             fetchUpcomingAppointments(user.email)
         }
-        appointmentsAdapter = AppointmentAdapter(emptyList()){}
-        binding.recyclerAppointments.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerAppointments.adapter = appointmentsAdapter
+        viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
+        appointmentsAdapter = AppointmentAdapter(
+            emptyList(),
+            onCancel = { appointment -> onCancelAppointment(appointment) },
+            onClick = { appointment -> onClickAppointment(appointment) }
+        )
 
         // Browse by specialty
         //TODO: make this dynamic - get distinct specialties of all doctors
@@ -135,6 +142,22 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), "error: $error", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun onCancelAppointment(appointment: Appointment) {
+        viewModel.cancelAppointment(requireContext(), appointment)
+    }
+
+    private fun onClickAppointment(appointment: Appointment) {
+        val bundle = bundleOf("appointmentId" to appointment.id)
+        val fragment = AppointmentDetailsFragment().apply {
+            arguments = bundle
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
 }

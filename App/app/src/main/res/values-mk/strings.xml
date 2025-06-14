@@ -73,6 +73,11 @@
     <string name="choose_your_preferred_language">Избери го твојот префериран јазик</string>
     <string name="switch_account">Смени профил</string>
     <string name="booking">Закажување</string>
+    <string name="appointment_details">Детали за термин</string>
+    <string name="how_did_the_appointment_go">Како помина терминот?</string>
+    <string name="edit">Измени</string>
+    <string name="save">Зачувај</string>
+    <string name="enter_appointment_details">Внесете детали за терминот</string>
 
     <string-array name="languages">
         <item>EN</item>

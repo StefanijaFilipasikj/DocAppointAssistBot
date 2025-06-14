@@ -73,6 +73,11 @@
     <string name="choose_your_preferred_language">Choose your preferred language</string>
     <string name="switch_account">Switch account</string>
     <string name="booking">Booking</string>
+    <string name="appointment_details">Appointment Details</string>
+    <string name="how_did_the_appointment_go">How did the appointment go?</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="enter_appointment_details">Enter appointment details</string>
 
     <string-array name="languages">
         <item>EN</item>
