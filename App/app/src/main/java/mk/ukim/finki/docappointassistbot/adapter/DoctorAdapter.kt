@@ -8,10 +8,10 @@ import mk.ukim.finki.docappointassistbot.databinding.ItemDoctorBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.R
 
-class DoctorsAdapter(
+class DoctorAdapter(
     private val doctors : java.util.ArrayList<Doctor>,
     private val onDoctorClick: (Doctor) -> Unit
-) : RecyclerView.Adapter<DoctorsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DoctorAdapter.ViewHolder>() {
 
     class ViewHolder(val binding : ItemDoctorBinding) : RecyclerView.ViewHolder(binding.root)
 
