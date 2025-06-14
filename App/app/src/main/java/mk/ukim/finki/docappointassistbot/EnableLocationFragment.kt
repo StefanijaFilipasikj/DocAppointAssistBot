@@ -16,12 +16,18 @@ class EnableLocationFragment : Fragment() {
     private var _binding: FragmentEnableLocationBinding? = null
     private val binding get() = _binding!!
 
+    private val sharedPref by lazy {
+        requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+    }
+
     private val requestLocationPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
+            sharedPref.edit().putBoolean("location_enabled", true).apply()
             Toast.makeText(requireContext(), "Location access enabled!", Toast.LENGTH_SHORT).show()
         } else {
+            sharedPref.edit().putBoolean("location_enabled", true).apply()
             Toast.makeText(requireContext(), "Location access denied!", Toast.LENGTH_SHORT).show()
         }
     }

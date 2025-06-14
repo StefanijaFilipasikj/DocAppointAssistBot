@@ -1,51 +1,37 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.adapter.NotificationsAdapter
+import mk.ukim.finki.docappointassistbot.databinding.FragmentNotificationsBinding
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModel
 import mk.ukim.finki.docappointassistbot.ui.viewModels.NotificationsViewModelFactory
 
-
 class NotificationsFragment : Fragment() {
 
-    private lateinit var upcomingRecyclerView: RecyclerView
-    private lateinit var recentRecyclerView: RecyclerView
+    private var _binding: FragmentNotificationsBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var upcomingAdapter: NotificationsAdapter
     private lateinit var recentAdapter: NotificationsAdapter
     private lateinit var viewModel: NotificationsViewModel
     private lateinit var appointmentsViewModel: AppointmentsViewModel
 
-    private lateinit var noUpcomingNotificationsText: TextView
-    private lateinit var noRecentNotificationsText: TextView
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_notifications, container, false)
+    ): View {
+        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
 
-        upcomingRecyclerView = view.findViewById(R.id.upcomingRecyclerView)
-        upcomingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        recentRecyclerView = view.findViewById(R.id.recentRecyclerView)
-        recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        noUpcomingNotificationsText = view.findViewById(R.id.tvNoUpcomingNotifications)
-        noRecentNotificationsText = view.findViewById(R.id.tvNoRecentNotifications)
-
-        appointmentsViewModel = ViewModelProvider(requireActivity()).get(AppointmentsViewModel::class.java)
-        viewModel = ViewModelProvider(this, NotificationsViewModelFactory(requireContext(), appointmentsViewModel))
-            .get(NotificationsViewModel::class.java)
+        binding.upcomingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         upcomingAdapter = NotificationsAdapter(emptyList(), emptyMap()) { id, isChecked ->
             viewModel.updateNotificationState(id, isChecked)
@@ -54,33 +40,50 @@ class NotificationsFragment : Fragment() {
             viewModel.updateNotificationState(id, isChecked)
         }
 
-        upcomingRecyclerView.adapter = upcomingAdapter
-        recentRecyclerView.adapter = recentAdapter
+        binding.upcomingRecyclerView.adapter = upcomingAdapter
+        binding.recentRecyclerView.adapter = recentAdapter
 
-        val upcoming = viewModel.notifications.value?.filter {
-            it.appointment.status == "Upcoming"
+        val sharedPref = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+        val notificationsEnabled = sharedPref.getBoolean("notifications_enabled", false)
+
+        if (!notificationsEnabled) {
+            binding.tvNoUpcomingNotifications.text = "Notifications are disabled"
+            binding.tvNoRecentNotifications.text = "Notifications are disabled"
+
+            binding.tvNoUpcomingNotifications.visibility = View.VISIBLE
+            binding.tvNoRecentNotifications.visibility = View.VISIBLE
+
+            binding.upcomingRecyclerView.visibility = View.GONE
+            binding.recentRecyclerView.visibility = View.GONE
+
+            return binding.root
         }
 
-        val recent = viewModel.notifications.value?.filter {
-            it.appointment.status == "Completed"
-        }
+        appointmentsViewModel = ViewModelProvider(requireActivity())[AppointmentsViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            NotificationsViewModelFactory(requireContext(), appointmentsViewModel)
+        )[NotificationsViewModel::class.java]
 
         val user = FirebaseAuth.getInstance().currentUser
-
-        noUpcomingNotificationsText.visibility = if (upcoming.isNullOrEmpty() || user == null) View.VISIBLE else View.GONE
-        noRecentNotificationsText.visibility = if (recent.isNullOrEmpty() || user == null) View.VISIBLE else View.GONE
 
         viewModel.notifications.observe(viewLifecycleOwner) { notifications ->
             val upcomingNotifications = notifications.filter {
                 it.appointment.status == "Upcoming"
             }
-
             val recentNotifications = notifications.filter {
                 it.appointment.status == "Completed"
             }
 
-            noUpcomingNotificationsText.visibility = if (upcomingNotifications.isEmpty()) View.VISIBLE else View.GONE
-            noRecentNotificationsText.visibility = if (recentNotifications.isEmpty()) View.VISIBLE else View.GONE
+            binding.tvNoUpcomingNotifications.visibility =
+                if (upcomingNotifications.isEmpty() || user == null) View.VISIBLE else View.GONE
+            binding.tvNoRecentNotifications.visibility =
+                if (recentNotifications.isEmpty() || user == null) View.VISIBLE else View.GONE
+
+            binding.upcomingRecyclerView.visibility =
+                if (upcomingNotifications.isEmpty()) View.GONE else View.VISIBLE
+            binding.recentRecyclerView.visibility =
+                if (recentNotifications.isEmpty()) View.GONE else View.VISIBLE
 
             viewModel.notificationStates.observe(viewLifecycleOwner) { notificationStates ->
                 upcomingAdapter.apply {
@@ -97,6 +100,11 @@ class NotificationsFragment : Fragment() {
             }
         }
 
-        return view
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

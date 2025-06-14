@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">DocAppointAssistBot</string>
+    <string name="doctor_image">Image du médecin</string>
+    <string name="view_doctors">Voir les médecins</string>
+    <string name="app_logo">Logo de l`application</string>
+    <string name="email">E-mail</string>
+    <string name="fullName">Nom complet</string>
+    <string name="photoURL">URL de la photo</string>
+    <string name="password">Mot de passe</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="login">Connexion</string>
+    <string name="sign_up">Inscription</string>
+    <string name="don_t_have_an_account_sign_up">Pas de compte ? Inscrivez-vous</string>
+    <string name="already_have_an_account_login">Déjà un compte ? Connectez-vous</string>
+    <string name="appointments">Rendez-vous</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="doctors">Médecins</string>
+    <string name="home">Accueil</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Paramètres</string>
+    <string name="view_details">Voir les détails</string>
+    <string name="book_appointment">Prendre un rendez-vous</string>
+    <string name="hospitals">Hôpitaux :</string>
+    <string name="doctor_overview">Aperçu du médecin</string>
+    <string name="biography">Biographie</string>
+    <string name="schedule">Horaire</string>
+    <string name="location">Emplacement</string>
+    <string name="select_time">Sélectionner l`heure</string>
+    <string name="select_date">Sélectionner la date</string>
+    <string name="upcoming">À venir</string>
+    <string name="completed">Terminé</string>
+    <string name="canceled">Annulé</string>
+    <string name="my_appointments">Mes rendez-vous</string>
+    <string name="patients">Patients</string>
+    <string name="experience">Expérience</string>
+    <string name="reviews">Avis</string>
+    <string name="turn_on_location">Activer la localisation</string>
+    <string name="enable_location_description">Activez la localisation pour voir les médecins et hôpitaux à proximité.</string>
+    <string name="turn_on">ACTIVER</string>
+    <string name="no_thanks">NON MERCI</string>
+    <string name="turn_on_notifications">Activer les notifications</string>
+    <string name="enable_notifications_description">Activez les notifications pour recevoir des alertes sur vos rendez-vous programmés.</string>
+    <string name="medibot">MediBot</string>
+    <string name="medibot_description">Prenez facilement rendez-vous avec notre assistant bot qui vous guidera vers le spécialiste le plus adapté.</string>
+    <string name="continue_str">CONTINUER</string>
+    <string name="notification_icon">Icône de notification</string>
+    <string name="upcoming_notification">À venir</string>
+    <string name="recent_notification">Récent</string>
+    <string name="no_upcoming_notifications">Aucune notification à venir</string>
+    <string name="no_recent_notifications">Aucune notification récente</string>
+    <string name="no_scheduled_appointments">Aucun rendez-vous programmé</string>
+    <string name="cancel_appointment">Annuler le rendez-vous</string>
+    <string name="user_avatar">Avatar de l`utilisateur</string>
+    <string name="user_profile">Profil utilisateur</string>
+    <string name="sign_out_icon">Icône de déconnexion</string>
+    <string name="sign_out">Déconnexion</string>
+    <string name="change_profile">Modifier le profil</string>
+    <string name="save_profile">Enregistrer le profil</string>
+    <string name="email_johndoe">E-mail : JohnDoe</string>
+    <string name="username_johndoe">Nom d`utilisateur : JohnDoe</string>
+    <string name="date_created_01_01_2020">Date de création : 01/01/2020</string>
+    <string name="hello">Bonjour</string>
+    <string name="how_do_you_feel_today">Comment vous sentez-vous aujourd`hui ?</string>
+    <string name="upcoming_appointments">Rendez-vous à venir</string>
+    <string name="browse_doctors_by_specialty">Médecins par spécialité</string>
+    <string name="see_all">Voir tout</string>
+    <string name="receive_updates_and_alerts">Receive updates and alerts</string>
+    <string name="current_location">Position actuelle</string>
+    <string name="allow_access_to_your_location">Autoriser l’accès à votre position</string>
+    <string name="dark_mode">Mode sombre</string>
+    <string name="view_the_app_in_dark_mode">Afficher l’application en mode sombre</string>
+    <string name="language">Langue</string>
+    <string name="choose_your_preferred_language">Choisissez votre langue préférée</string>
+    <string name="switch_account">Changer de compte</string>
+    <string name="booking">Réservation</string>
+
+    <string-array name="languages">
+        <item>EN</item>
+        <item>MK</item>
+        <item>FR</item>
+    </string-array>
+</resources>

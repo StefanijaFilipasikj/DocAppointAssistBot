@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.DocAppointAssistBot" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="android:windowBackground">#FAFAFA</item>
+        <item name="android:windowBackground">@color/gray_100</item>
 
         <item name="colorPrimary">@color/blue_500</item>
         <item name="colorPrimaryVariant">@color/blue_200</item>
@@ -13,5 +13,9 @@
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="spinnerCentered" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textAlignment">center</item>
     </style>
 </resources>

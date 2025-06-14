@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@android:color/holo_red_dark" />
+            app:tint="@color/red" />
 
 
         <!-- Doctor Full Name -->

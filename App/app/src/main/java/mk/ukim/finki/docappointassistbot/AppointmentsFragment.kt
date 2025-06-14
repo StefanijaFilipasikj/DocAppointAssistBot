@@ -80,6 +80,11 @@ class AppointmentsFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
@@ -87,7 +92,7 @@ class AppointmentsFragment : Fragment() {
         }
 
         if (status != null && selectedStatus != status) {
-            status.setTextColor(requireContext().getColor(R.color.white))
+            status.setTextColor(requireContext().getColor(R.color.gray_000))
             status.setBackgroundResource(R.drawable.bg_blue500_radius05)
             selectedStatus = status
         } else {
