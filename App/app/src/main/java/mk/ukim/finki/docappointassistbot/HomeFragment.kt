@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
 
         // Upcoming Appointments
         if (user != null) {
-            fetchUpcomingAppointments(user.email)
+            fetchUpcomingAppointments(user.uid)
         }
         viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
         appointmentsAdapter = AppointmentAdapter(
@@ -127,13 +127,13 @@ class HomeFragment : Fragment() {
             .commit()
     }
 
-    private fun fetchUpcomingAppointments(userEmail: String?) {
+    private fun fetchUpcomingAppointments(uid: String?) {
         val appointmentsRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
         appointmentsRef.orderByChild("userId")
-            .equalTo(userEmail)
+            .equalTo(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val upcomingAppointments = mutableListOf<Appointment>()

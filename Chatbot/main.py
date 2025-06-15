@@ -103,6 +103,7 @@ async def health(report: PatientReport):
         vectorstore.add_documents([document])
     except Exception as e:
         return False
+    print(f"Document embedded: {report}")
     return True
 
 @app.get("/health")

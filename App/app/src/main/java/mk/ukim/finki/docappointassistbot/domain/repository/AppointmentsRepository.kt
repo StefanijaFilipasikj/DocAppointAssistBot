@@ -20,7 +20,7 @@ class AppointmentsRepository {
     private val appointmentsLiveData = MutableLiveData<List<Appointment>>()
 
     fun getAppointments(): LiveData<List<Appointment>> {
-        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
@@ -127,7 +127,7 @@ class AppointmentsRepository {
     }
 
     fun checkAndUpdateStatusesForCurrentUser() {
-        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
@@ -150,7 +150,7 @@ class AppointmentsRepository {
     }
 
     fun cancelAppointment(context: Context, appointment: Appointment): LiveData<List<Appointment>> {
-        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
@@ -195,7 +195,7 @@ class AppointmentsRepository {
 
     fun updateDetails(id: Int, newDetails: String): LiveData<List<Appointment>> {
         val liveData = MutableLiveData<List<Appointment>>()
-        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
