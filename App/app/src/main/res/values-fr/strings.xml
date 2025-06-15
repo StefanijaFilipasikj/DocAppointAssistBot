@@ -20,7 +20,7 @@
     <string name="settings">Paramètres</string>
     <string name="view_details">Voir les détails</string>
     <string name="book_appointment">Prendre un rendez-vous</string>
-    <string name="hospitals">Hôpitaux :</string>
+    <string name="hospital">Hôpitaux</string>
     <string name="doctor_overview">Aperçu du médecin</string>
     <string name="biography">Biographie</string>
     <string name="schedule">Horaire</string>
@@ -78,6 +78,20 @@
     <string name="edit">Modifier</string>
     <string name="save">Enregistrer</string>
     <string name="enter_appointment_details">Entrez les détails du rendez-vous</string>
+    <string name="doctor">Médecin</string>
+    <string name="specialty">Spécialité</string>
+    <string name="date">Date</string>
+    <string name="details">Détails:</string>
+    <string name="doctors_near_you">Médecins proches</string>
+    <string name="cardiologist">Cardiologues</string>
+    <string name="neurologist">Neurologues</string>
+    <string name="gastroenterologist">Gastro-entérologues</string>
+    <string name="dentist">Dentistes</string>
+    <string name="dermatologist">Dermatologues</string>
+    <string name="psychiatrist">Psychiatres</string>
+    <string name="allergist">Allergologues</string>
+    <string name="nephrologist">Néphrologues</string>
+    <string name="pediatrician">Pédiatres</string>
 
     <string-array name="languages">
         <item>EN</item>

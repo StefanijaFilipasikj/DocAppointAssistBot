@@ -20,7 +20,7 @@
     <string name="settings">Settings</string>
     <string name="view_details">View Details</string>
     <string name="book_appointment">Book Appointment</string>
-    <string name="hospitals">Hospitals:</string>
+    <string name="hospital">Hospital</string>
     <string name="doctor_overview">Doctor Overview</string>
     <string name="biography">Biography</string>
     <string name="schedule">Schedule</string>
@@ -78,6 +78,20 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="enter_appointment_details">Enter appointment details</string>
+    <string name="doctor">Doctor</string>
+    <string name="specialty">Specialty</string>
+    <string name="date">Date</string>
+    <string name="details">Details:</string>
+    <string name="doctors_near_you">Doctors Near You</string>
+    <string name="cardiologist">Cardiologists</string>
+    <string name="neurologist">Neurologists</string>
+    <string name="gastroenterologist">Gastroenterologists</string>
+    <string name="dentist">Dentists</string>
+    <string name="dermatologist">Dermatologists</string>
+    <string name="psychiatrist">Psychiatrists</string>
+    <string name="allergist">Allergists</string>
+    <string name="nephrologist">Nephrologists</string>
+    <string name="pediatrician">Pediatricians</string>
 
     <string-array name="languages">
         <item>EN</item>

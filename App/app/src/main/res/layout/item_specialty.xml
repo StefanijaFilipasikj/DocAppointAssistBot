@@ -3,8 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="6dp">
+    android:gravity="center">
 
     <ImageView
         android:id="@+id/img_specialty"
@@ -16,7 +15,7 @@
 
     <TextView
         android:id="@+id/tv_specialty_name"
-        android:layout_width="70dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text=""

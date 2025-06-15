@@ -18,9 +18,9 @@
     <string name="home">Дома</string>
     <string name="notifications">Известувања</string>
     <string name="settings">Поставки</string>
-    <string name="view_details">Погледни детали</string>
+    <string name="view_details">Детали</string>
     <string name="book_appointment">Закажи термин</string>
-    <string name="hospitals">Болници:</string>
+    <string name="hospital">Болницa</string>
     <string name="doctor_overview">Преглед на доктор</string>
     <string name="biography">Биографија</string>
     <string name="schedule">Распоред</string>
@@ -62,8 +62,8 @@
     <string name="hello">Здраво</string>
     <string name="how_do_you_feel_today">Како се чувствуваш денес?</string>
     <string name="upcoming_appointments">Закажани термини</string>
-    <string name="browse_doctors_by_specialty">Доктори по специјалност</string>
-    <string name="see_all">Погледни сè</string>
+    <string name="browse_doctors_by_specialty">Специјалисти</string>
+    <string name="see_all">Погледни ги сите</string>
     <string name="receive_updates_and_alerts">Receive updates and alerts</string>
     <string name="current_location">Моментална локација</string>
     <string name="allow_access_to_your_location">Дозволи пристап до твојата локација</string>
@@ -78,6 +78,20 @@
     <string name="edit">Измени</string>
     <string name="save">Зачувај</string>
     <string name="enter_appointment_details">Внесете детали за терминот</string>
+    <string name="doctor">Доктор</string>
+    <string name="specialty">Специјалност</string>
+    <string name="date">Датум</string>
+    <string name="details">Детали:</string>
+    <string name="doctors_near_you">Доктори во близина</string>
+    <string name="cardiologist">Кардиолози</string>
+    <string name="neurologist">Невролози</string>
+    <string name="gastroenterologist">Гастроентеролози</string>
+    <string name="dentist">Забари</string>
+    <string name="dermatologist">Дерматолози</string>
+    <string name="psychiatrist">Психијатри</string>
+    <string name="allergist">Алерголози</string>
+    <string name="nephrologist">Нефролози</string>
+    <string name="pediatrician">Педијатари</string>
 
     <string-array name="languages">
         <item>EN</item>
