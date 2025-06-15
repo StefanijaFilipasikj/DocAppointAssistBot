@@ -12,11 +12,12 @@ import java.util.Locale
 
 class UserInfoActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityUserInfoBinding
+    private var _binding: ActivityUserInfoBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityUserInfoBinding.inflate(layoutInflater)
+        _binding = ActivityUserInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val user = FirebaseAuth.getInstance().currentUser

@@ -33,4 +33,9 @@ class AppointmentsViewModel : ViewModel() {
         }
     }
 
+    fun updateAppointmentDetails(id: Int, newDetails: String) {
+        repository.updateDetails(id, newDetails).observeForever { updatedList ->
+            _appointments.value = updatedList
+        }
+    }
 }

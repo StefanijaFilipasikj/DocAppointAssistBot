@@ -19,9 +19,14 @@ class EnableNotificationsFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
 
+    private val sharedPref by lazy {
+        requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+    }
+
     private val requestNotificationPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
+        sharedPref.edit().putBoolean("notifications_enabled", isGranted).apply()
         if (isGranted) {
             Toast.makeText(requireContext(), "Notifications enabled!", Toast.LENGTH_SHORT).show()
         } else {

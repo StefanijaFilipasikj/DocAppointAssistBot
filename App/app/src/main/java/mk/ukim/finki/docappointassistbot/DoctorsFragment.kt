@@ -13,7 +13,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import mk.ukim.finki.docappointassistbot.adapter.DoctorsAdapter
+import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorsBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 
@@ -24,6 +24,16 @@ class DoctorsFragment : Fragment() {
 
     private lateinit var doctors: ArrayList<Doctor>
     private lateinit var firebaseRef: DatabaseReference
+
+    companion object {
+        fun newInstance(specialty: String): DoctorsFragment {
+            val fragment = DoctorsFragment()
+            fragment.arguments = Bundle().apply {
+                putString("specialty", specialty)
+            }
+            return fragment
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,27 +46,38 @@ class DoctorsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val specialty = arguments?.getString("specialty")
+        if(specialty != null){
+            binding.tvDoctors.text = "${specialty}s";
+        }
+
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors")
         doctors = arrayListOf()
-        fetchData()
+        fetchData(specialty)
 
         binding.doctors.layoutManager = LinearLayoutManager(context)
     }
 
-    private fun fetchData() {
+    private fun fetchData(specialty: String?) {
+        doctors.clear();
+
         firebaseRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot){
                 doctors.clear()
                 if (snapshot.exists()){
                     for (doctorSnap in snapshot.children){
                         val doctor = doctorSnap.getValue(Doctor::class.java)
-                        doctors.add(doctor!!)
-                        Log.d("DoctorsFragment", "Doctor fetched: $doctor")
+                        if (doctor != null) {
+                            if (specialty == null || doctor.specialty.equals(specialty, ignoreCase = true)) {
+                                doctors.add(doctor)
+                            }
+                            Log.d("DoctorsFragment", "Doctor fetched: $doctor")
+                        }
                     }
                 }
-                val adapter = DoctorsAdapter(doctors){ selectedDoctor ->
+                val adapter = DoctorAdapter(doctors){ selectedDoctor ->
                     val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
 
                     parentFragmentManager.beginTransaction()

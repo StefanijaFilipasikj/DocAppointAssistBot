@@ -11,8 +11,8 @@ data class Doctor(
     val patients: Int = 0,
     val experience: Double = 0.0,
     val reviews: Int = 0,
-    val hospitalIds: List<Int>? = null,
+    val hospitalId: Int? = null,
     val workHourIds: List<Int>? = null,
-    var hospitals: List<Hospital>? = null,
-    var workHours: List<WorkHours>? = null
+    var hospital: Hospital? = null,
+    var workHours: List<WorkHours>? = null,
 )

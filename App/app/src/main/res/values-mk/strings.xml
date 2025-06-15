@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">DocAppointAssistBot</string>
+    <string name="doctor_image">Слика на докторот</string>
+    <string name="view_doctors">Погледни доктори</string>
+    <string name="app_logo">Лого на апликацијата</string>
+    <string name="email">Електронска адреса</string>
+    <string name="fullName">Цело име</string>
+    <string name="photoURL">URL од слика</string>
+    <string name="password">Лозинка</string>
+    <string name="confirm_password">Потврди лозинка</string>
+    <string name="login">Најави се</string>
+    <string name="sign_up">Регистрирај се</string>
+    <string name="don_t_have_an_account_sign_up">Немаш корисничка сметка? Регистрирај се</string>
+    <string name="already_have_an_account_login">Веќе имаш сметка? Најави се</string>
+    <string name="appointments">Термини</string>
+    <string name="chatbot">Чатбот</string>
+    <string name="doctors">Доктори</string>
+    <string name="home">Дома</string>
+    <string name="notifications">Известувања</string>
+    <string name="settings">Поставки</string>
+    <string name="view_details">Погледни детали</string>
+    <string name="book_appointment">Закажи термин</string>
+    <string name="hospitals">Болници:</string>
+    <string name="doctor_overview">Преглед на доктор</string>
+    <string name="biography">Биографија</string>
+    <string name="schedule">Распоред</string>
+    <string name="location">Локација</string>
+    <string name="select_time">Избери време</string>
+    <string name="select_date">Избери датум</string>
+    <string name="upcoming">Закажани</string>
+    <string name="completed">Завршени</string>
+    <string name="canceled">Откажани</string>
+    <string name="my_appointments">Мои термини</string>
+    <string name="patients">Пациенти</string>
+    <string name="experience">Искуство</string>
+    <string name="reviews">Рецензии</string>
+    <string name="turn_on_location">Вклучи локација</string>
+    <string name="enable_location_description">Овозможи споделување на локација за да ги видиш блиските доктори и болници.</string>
+    <string name="turn_on">ВКЛУЧИ</string>
+    <string name="no_thanks">НЕ, ФАЛА</string>
+    <string name="turn_on_notifications">Вклучи известувања</string>
+    <string name="enable_notifications_description">Овозможи известувања за да добиваш навремени потсетници за твоите закажани термини.</string>
+    <string name="medibot">МедиБот</string>
+    <string name="medibot_description">Лесно закажи термин со помош на нашиот асистент-бот кој ќе те насочи кон најсоодветниот специјалист.</string>
+    <string name="continue_str">ПРОДОЛЖИ</string>
+    <string name="notification_icon">Икона за известувања</string>
+    <string name="upcoming_notification">Закажани</string>
+    <string name="recent_notification">Неодамнешни</string>
+    <string name="no_upcoming_notifications">Нема закажани известувања</string>
+    <string name="no_recent_notifications">Нема неодамнешни известувања</string>
+    <string name="no_scheduled_appointments">Нема закажани термини</string>
+    <string name="cancel_appointment">Откажи термин</string>
+    <string name="user_avatar">Аватар на корисникот</string>
+    <string name="user_profile">Профил на корисникот</string>
+    <string name="sign_out_icon">Икона за одјава</string>
+    <string name="sign_out">Одјави се</string>
+    <string name="change_profile">Промени профил</string>
+    <string name="save_profile">Зачувај профил</string>
+    <string name="email_johndoe">Е-пошта: JohnDoe</string>
+    <string name="username_johndoe">Корисничко име: JohnDoe</string>
+    <string name="date_created_01_01_2020">Креирано на: 01/01/2020</string>
+    <string name="hello">Здраво</string>
+    <string name="how_do_you_feel_today">Како се чувствуваш денес?</string>
+    <string name="upcoming_appointments">Закажани термини</string>
+    <string name="browse_doctors_by_specialty">Доктори по специјалност</string>
+    <string name="see_all">Погледни сè</string>
+    <string name="receive_updates_and_alerts">Receive updates and alerts</string>
+    <string name="current_location">Моментална локација</string>
+    <string name="allow_access_to_your_location">Дозволи пристап до твојата локација</string>
+    <string name="dark_mode">Темна тема</string>
+    <string name="view_the_app_in_dark_mode">Прикажи ја апликацијата во темна тема</string>
+    <string name="language">Јазик</string>
+    <string name="choose_your_preferred_language">Избери го твојот префериран јазик</string>
+    <string name="switch_account">Смени профил</string>
+    <string name="booking">Закажување</string>
+    <string name="appointment_details">Детали за термин</string>
+    <string name="how_did_the_appointment_go">Како помина терминот?</string>
+    <string name="edit">Измени</string>
+    <string name="save">Зачувај</string>
+    <string name="enter_appointment_details">Внесете детали за терминот</string>
+
+    <string-array name="languages">
+        <item>EN</item>
+        <item>MK</item>
+        <item>FR</item>
+    </string-array>
+</resources>

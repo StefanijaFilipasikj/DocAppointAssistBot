@@ -56,7 +56,7 @@ class AppointmentsRepository {
                 val doctor = snapshot.getValue(Doctor::class.java)
                 if (doctor != null) {
                     appointment.doctor = doctor
-                    fetchHospitalDetails(appointment, doctor.hospitalIds ?: emptyList())
+                    fetchHospitalDetails(appointment, doctor.hospitalId)
                 }
             }
 
@@ -66,17 +66,17 @@ class AppointmentsRepository {
         })
     }
 
-    private fun fetchHospitalDetails(appointment: Appointment, hospitalIds: List<Int>) {
+    private fun fetchHospitalDetails(appointment: Appointment, hospitalId: Int?) {
         val hospitalRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("hospitals")
 
         hospitalRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val hospitals = snapshot.children
+                val hospital = snapshot.children
                     .mapNotNull { it.getValue(Hospital::class.java) }
-                    .filter { hospitalIds.contains(it.id) }
+                    .find { it.id == hospitalId }
 
-                appointment.doctor?.hospitals = hospitals
+                appointment.doctor?.hospital = hospital
 
                 if (!appointmentsList.contains(appointment)) {
                     appointmentsList.add(appointment)
@@ -193,5 +193,44 @@ class AppointmentsRepository {
         return liveData
     }
 
+    fun updateDetails(id: Int, newDetails: String): LiveData<List<Appointment>> {
+        val liveData = MutableLiveData<List<Appointment>>()
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
+        val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("appointments")
+
+        database.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (data in snapshot.children) {
+                        val appointment = data.getValue(Appointment::class.java)
+                        if (appointment != null && appointment.id == id) {
+                            val firebaseKey = data.key
+                            if (firebaseKey != null) {
+                                val updates = mapOf<String, Any>("details" to newDetails)
+                                database.child(firebaseKey).updateChildren(updates)
+                                    .addOnSuccessListener {
+                                        appointment.details = newDetails
+                                        val index = appointmentsList.indexOfFirst { it.id == id }
+                                        if (index != -1) {
+                                            appointmentsList[index].details = newDetails
+                                        }
+                                        liveData.postValue(appointmentsList.toList())
+                                    }
+                                    .addOnFailureListener {
+                                        liveData.postValue(appointmentsList.toList())
+                                    }
+                            }
+                            break
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseError", error.message)
+                }
+            })
+        return liveData
+    }
 
 }

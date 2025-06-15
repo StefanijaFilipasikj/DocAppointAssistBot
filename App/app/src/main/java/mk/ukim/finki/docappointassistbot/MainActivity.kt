@@ -1,6 +1,5 @@
 package mk.ukim.finki.docappointassistbot
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -8,18 +7,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -29,16 +24,19 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
+import mk.ukim.finki.docappointassistbot.utils.PermissionsUtils
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
-    private val NOTIFICATION_PERMISSION = android.Manifest.permission.POST_NOTIFICATIONS
-    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
-
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val mode = sharedPref.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_NO)
+        AppCompatDelegate.setDefaultNightMode(mode)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -59,7 +57,9 @@ class MainActivity : AppCompatActivity() {
         AppointmentsRepository().checkAndUpdateStatusesForCurrentUser()
 
         // Bottom navigation bar
-        replaceFragment(HomeFragment())
+        if (savedInstanceState == null) {
+            replaceFragment(HomeFragment())
+        }
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> replaceFragment(HomeFragment())
@@ -133,60 +133,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkNotificationAndAlarmPermissions() {
-        val needsNotificationPermission =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    ContextCompat.checkSelfPermission(this, NOTIFICATION_PERMISSION) != android.content.pm.PackageManager.PERMISSION_GRANTED
-
-        val needsExactAlarmPermission =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                    !(getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
-
-        if (needsNotificationPermission || needsExactAlarmPermission) {
-            showPermissionDialog()
+        PermissionsUtils.checkNotificationAndAlarmPermissions(this) { builder ->
+            builder.show()
         }
     }
-
-    private fun showPermissionDialog() {
-        val message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            "This app requires permission to send notifications and schedule exact alarms for your appointments. Please grant the necessary permissions in Settings."
-        } else {
-            "This app requires permission to send notifications for your appointments. Please grant permission in Settings."
-        }
-
-        AlertDialog.Builder(this)
-            .setTitle("Permissions Required")
-            .setMessage(message)
-            .setPositiveButton("Grant Permissions") { _, _ ->
-                // Open the App Settings page
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", packageName, null)
-                }
-                startActivity(intent)
-
-                // Guide user to the alarm settings
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val alarmIntent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                    startActivity(alarmIntent)
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
 
     // Ask for POST_NOTIFICATIONS permission directly
     override fun onResume() {
         super.onResume()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, NOTIFICATION_PERMISSION) != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(NOTIFICATION_PERMISSION),
-                NOTIFICATION_PERMISSION_REQUEST_CODE
-            )
-        }
+        PermissionsUtils.requestNotificationPermission(this)
     }
 
     // Handle permission request result (for POST_NOTIFICATIONS)
@@ -194,18 +149,12 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with scheduling notifications/alarms
-            } else {
-                // Permission denied, inform the user
-                AlertDialog.Builder(this)
-                    .setTitle("Permission Denied")
-                    .setMessage("Without this permission, the app cannot send notifications or reminders.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
-        }
+
+        PermissionsUtils.handlePermissionResult(
+            requestCode,
+            grantResults,
+            this
+        ) {}
     }
 
     private fun createNotificationChannel() {
@@ -220,9 +169,11 @@ class MainActivity : AppCompatActivity() {
                 enableVibration(true)
                 enableLights(true)
             }
-
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            if (PermissionsUtils.isNotificationPermissionGranted(this)) {
+                val notificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+            }
         }
     }
 
