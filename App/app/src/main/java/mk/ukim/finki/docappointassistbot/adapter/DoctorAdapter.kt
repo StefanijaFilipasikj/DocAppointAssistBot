@@ -9,7 +9,7 @@ import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.R
 
 class DoctorAdapter(
-    private val doctors : java.util.ArrayList<Doctor>,
+    private var doctors : List<Doctor>,
     private val onDoctorClick: (Doctor) -> Unit
 ) : RecyclerView.Adapter<DoctorAdapter.ViewHolder>() {
 
@@ -44,4 +44,8 @@ class DoctorAdapter(
         }
     }
 
+    fun updateDoctors(newDoctors: List<Doctor>) {
+        this.doctors = newDoctors
+        notifyDataSetChanged()
+    }
 }

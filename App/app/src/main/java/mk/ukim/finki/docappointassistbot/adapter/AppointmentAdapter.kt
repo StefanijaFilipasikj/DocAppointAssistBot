@@ -26,7 +26,7 @@ class AppointmentAdapter(private var appointments: List<Appointment>,
             binding.apply{
                 tvDoctorFullName.text = currentItem.doctor?.fullname ?: "Unknown Doctor"
                 tvSpecialty.text = currentItem.doctor?.specialty ?: "Specialty Not Specified"
-                tvHospital.text = currentItem.doctor?.hospitals?.getOrNull(0)?.name ?: "Hospital Not Specified"
+                tvHospital.text = currentItem.doctor?.hospital?.name ?: "Hospital Not Specified"
                 tvAppointmentDateTime.text = "${currentItem.startTime}"
 
                 Glide.with(holder.itemView.context)

@@ -78,15 +78,13 @@ class NotificationsViewModel(
         notifications: MutableList<Notification>,
         notificationStates: MutableMap<Int, Boolean>
     ) {
-        val hospitalIds = doctor.hospitalIds ?: emptyList()
+        val hospitalId = doctor.hospitalId ?: return
 
         try {
-            val snapshot = dbRef.child("hospitals").get().await()
-            val hospitals = snapshot.children
-                .mapNotNull { it.getValue(Hospital::class.java) }
-                .filter { hospitalIds.contains(it.id) }
+            val snapshot = dbRef.child("hospitals").child(hospitalId.toString()).get().await()
+            val hospital = snapshot.getValue(Hospital::class.java)
+            doctor.hospital = hospital
 
-            doctor.hospitals = hospitals
             val updatedAppointment = appointment.copy(doctor = doctor)
 
             val notificationId = updatedAppointment.id

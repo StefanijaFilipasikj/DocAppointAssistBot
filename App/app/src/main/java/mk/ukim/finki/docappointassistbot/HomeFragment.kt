@@ -16,10 +16,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
+import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.adapter.SpecialtyAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentHomeBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
+import mk.ukim.finki.docappointassistbot.utils.DoctorLocationUtil
 
 class HomeFragment : Fragment() {
 
@@ -27,7 +29,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var appointmentsAdapter: AppointmentAdapter
-    //private lateinit var doctorsNearbyAdapter: DoctorAdapter
+    private lateinit var doctorsNearbyAdapter: DoctorAdapter
     private lateinit var viewModel: AppointmentsViewModel
 
     override fun onCreateView(
@@ -90,15 +92,27 @@ class HomeFragment : Fragment() {
             replaceFragment(DoctorsFragment());
         }
 
-        // TODO: implement this later
         // Browse nearby doctors
-        //binding.tvSeeAllNearby.setOnClickListener {
-            // replaceFragment(MapFragment());
-        //}
+        binding.tvSeeAllNearby.setOnClickListener {
+             replaceFragment(DoctorsNearYouFragment())
+        }
 
-        //doctorsNearbyAdapter = DoctorAdapter()
-        //binding.recyclerDoctorsNearby.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        //binding.recyclerDoctorsNearby.adapter = doctorsNearbyAdapter
+        doctorsNearbyAdapter = DoctorAdapter(emptyList()) { selectedDoctor ->
+            val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frameLayout, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        DoctorLocationUtil.getClosestDoctors(this, maxCount = 3) { nearbyDoctors ->
+            if (nearbyDoctors.isNotEmpty()) {
+                doctorsNearbyAdapter.updateDoctors(nearbyDoctors)
+            } else {
+                Toast.makeText(requireContext(), "No nearby doctors found", Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.recyclerDoctorsNearby.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerDoctorsNearby.adapter = doctorsNearbyAdapter
     }
 
     override fun onDestroyView() {
