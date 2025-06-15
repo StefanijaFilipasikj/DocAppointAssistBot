@@ -12,6 +12,8 @@
     <color name="blue_200">#07374F</color>
     <color name="blue_100">#041E2C</color>
 
+    <color name="blue_200_200">#ACD1E4</color>
+    <color name="blue_200_500">#107AB0</color>
 
     <color name="red">#FF0000</color>
 
@@ -28,9 +30,13 @@
     <color name="gray_100">#1B1B1B</color> <!--use instead of pure black-->
 
     <!--  TRANSPARENT BLACKS  -->
-    <color name="border_light">#1AFFFFFF</color>
-    <color name="border_medium">#40FFFFFF</color>
-    <color name="border_dark">#66FFFFFF</color>
+    <color name="black_transparent_10">#1AFFFFFF</color>
+    <color name="black_transparent_25">#40FFFFFF</color>
+    <color name="black_transparent_40">#66FFFFFF</color>
+
+    <!--  WHITES  -->
+    <color name="white">#FFFFFF</color> <!--use carefully - make sure it looks good in dark mode-->
+    <color name="white_transparent_90">#1AFFFFFF</color>
 
     <!-- ONLY FOR STAR RANKINGS -->
     <color name="gold">#F9B20B</color>

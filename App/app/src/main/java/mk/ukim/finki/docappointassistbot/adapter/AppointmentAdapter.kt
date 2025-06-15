@@ -48,7 +48,6 @@ class AppointmentAdapter(private var appointments: List<Appointment>,
                         onCancel(currentItem)
                     }
                 }else if(currentItem.status.equals("Completed", ignoreCase = true)){
-                    holder.itemView.alpha = 0.5f
                     cardView.setBackgroundResource(R.drawable.bg_blue200_radius10)
                     binding.btnCancel.visibility = View.GONE
                 }else{ //Canceled

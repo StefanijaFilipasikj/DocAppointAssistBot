@@ -12,14 +12,14 @@
         android:id="@+id/homeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:backgroundTint="@color/white_transparent_90">
 
         <!-- Chatbot  -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardChatWithChatbot"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray_000"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             android:layout_margin="2dp"
@@ -165,7 +165,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/see_all"
-                android:textColor="@color/blue_500"
+                android:textColor="@color/blue_600"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_nearby_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>
