@@ -48,7 +48,12 @@ class DoctorsFragment : Fragment() {
 
         val specialty = arguments?.getString("specialty")
         if(specialty != null){
-            binding.tvDoctors.text = "${specialty}s";
+            val resId = requireContext().resources.getIdentifier(specialty.lowercase(), "string", requireContext().packageName)
+            if (resId != 0) {
+                binding.tvDoctors.text = getString(resId)
+            } else {
+                binding.tvDoctors.text = specialty
+            }
         }
 
         firebaseRef = FirebaseDatabase

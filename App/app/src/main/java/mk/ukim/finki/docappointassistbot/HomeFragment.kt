@@ -20,6 +20,7 @@ import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.adapter.SpecialtyAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentHomeBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
+import mk.ukim.finki.docappointassistbot.domain.Specialty
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.utils.DoctorLocationUtil
 
@@ -66,15 +67,15 @@ class HomeFragment : Fragment() {
         //TODO: map the photos ic_illustration_{specialty}_40 (make sure vector exists)
         //TODO: sort in alphabetical order or by number of doctors in specialty
         val specialties = listOf(
-            "Cardiologist" to R.drawable.ic_illustration_cardiologist_40,
-            "Neurologist" to R.drawable.ic_illustration_neurologist_40,
-            "Gastroenterologist" to R.drawable.ic_illustration_gastroenterologist_40,
-            "Dentist" to R.drawable.ic_illustration_dentist_40,
-            "Dermatologist" to R.drawable.ic_illustration_dermatologist_40,
-            "Psychiatrist" to R.drawable.ic_illustration_psychiatrist_40,
-            "Allergist" to R.drawable.ic_illustration_allergist_40,
-            "Nephrologist" to R.drawable.ic_illustration_nephrologist_40,
-            "Pediatrician" to R.drawable.ic_illustration_pediatrician_40,
+            Specialty("Cardiologist", R.string.cardiologist, R.drawable.ic_illustration_cardiologist_40),
+            Specialty("Neurologist", R.string.neurologist, R.drawable.ic_illustration_neurologist_40),
+            Specialty("Gastroenterologist", R.string.gastroenterologist, R.drawable.ic_illustration_gastroenterologist_40),
+            Specialty("Dentist", R.string.dentist, R.drawable.ic_illustration_dentist_40),
+            Specialty("Dermatologist", R.string.dermatologist, R.drawable.ic_illustration_dermatologist_40),
+            Specialty("Psychiatrist", R.string.psychiatrist, R.drawable.ic_illustration_psychiatrist_40),
+            Specialty("Allergist", R.string.allergist, R.drawable.ic_illustration_allergist_40),
+            Specialty("Nephrologist", R.string.nephrologist, R.drawable.ic_illustration_nephrologist_40),
+            Specialty("Pediatrician", R.string.pediatrician, R.drawable.ic_illustration_pediatrician_40),
         )
 
         val recyclerSpecialists = view.findViewById<RecyclerView>(R.id.recycler_specialists)

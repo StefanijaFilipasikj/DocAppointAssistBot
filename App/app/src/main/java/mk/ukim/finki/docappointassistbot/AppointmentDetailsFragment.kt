@@ -38,6 +38,12 @@ class AppointmentDetailsFragment : Fragment() {
             }
 
             appointment = appointmentFound
+
+            binding.tvDoctorFullName.text = "${getString(R.string.doctor)}: ${appointment.doctor?.fullname}"
+            binding.tvSpecialty.text = "${getString(R.string.specialty)}: ${appointment.doctor?.specialty}"
+            binding.tvHospital.text = "${getString(R.string.hospital)}: ${appointment.doctor?.hospital?.name}"
+            binding.tvAppointmentDateTime.text = "${getString(R.string.date)}: ${appointment.startTime}"
+
             fun showTextMode() {
                 val details = appointment.details?.trim()
                 if (details.isNullOrEmpty()) {
