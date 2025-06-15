@@ -91,11 +91,11 @@ class AppointmentsFragment : Fragment() {
     private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
-            setBackgroundResource(R.drawable.bg_white_radius05)
+            setBackgroundResource(android.R.color.transparent)
         }
 
         if (status != null && selectedStatus != status) {
-            status.setTextColor(requireContext().getColor(R.color.gray_000))
+            status.setTextColor(requireContext().getColor(R.color.white))
             status.setBackgroundResource(R.drawable.bg_blue500_radius05)
             selectedStatus = status
         } else {

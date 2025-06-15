@@ -63,32 +63,7 @@ class HomeFragment : Fragment() {
         )
 
         // Browse by specialty
-        //TODO: make this dynamic - get distinct specialties of all doctors
-        //TODO: map the photos ic_illustration_{specialty}_40 (make sure vector exists)
-        //TODO: sort in alphabetical order or by number of doctors in specialty
-        val specialties = listOf(
-            Specialty("Cardiologist", R.string.cardiologist, R.drawable.ic_illustration_cardiologist_40),
-            Specialty("Neurologist", R.string.neurologist, R.drawable.ic_illustration_neurologist_40),
-            Specialty("Gastroenterologist", R.string.gastroenterologist, R.drawable.ic_illustration_gastroenterologist_40),
-            Specialty("Dentist", R.string.dentist, R.drawable.ic_illustration_dentist_40),
-            Specialty("Dermatologist", R.string.dermatologist, R.drawable.ic_illustration_dermatologist_40),
-            Specialty("Psychiatrist", R.string.psychiatrist, R.drawable.ic_illustration_psychiatrist_40),
-            Specialty("Allergist", R.string.allergist, R.drawable.ic_illustration_allergist_40),
-            Specialty("Nephrologist", R.string.nephrologist, R.drawable.ic_illustration_nephrologist_40),
-            Specialty("Pediatrician", R.string.pediatrician, R.drawable.ic_illustration_pediatrician_40),
-        )
-
-        val recyclerSpecialists = view.findViewById<RecyclerView>(R.id.recycler_specialists)
-        recyclerSpecialists.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerSpecialists.adapter = SpecialtyAdapter(specialties) { selectedSpecialist ->
-            val fragment = DoctorsFragment().apply {
-                arguments = Bundle().apply {
-                    putString("specialty", selectedSpecialist)
-                }
-            }
-            replaceFragment(fragment);
-        }
-
+        fetchAndDisplaySpecialties()
         binding.tvSeeAllSpecialties.setOnClickListener{
             replaceFragment(DoctorsFragment());
         }
@@ -173,6 +148,53 @@ class HomeFragment : Fragment() {
             .replace(R.id.frameLayout, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun fetchAndDisplaySpecialties(){
+        val dbRef = FirebaseDatabase
+            .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("doctors")
+
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val specialtyCountMap = mutableMapOf<String, Int>()
+
+                for (doctorSnap in snapshot.children) {
+                    val specialty = doctorSnap.child("specialty").getValue(String::class.java)?.trim()
+                    if (!specialty.isNullOrEmpty()) {
+                        specialtyCountMap[specialty] = specialtyCountMap.getOrDefault(specialty, 0) + 1
+                    }
+                }
+
+                val specialties = specialtyCountMap.map { (specialty, _) ->
+                    val key = specialty.lowercase().replace(" ", "_")
+                    val stringResId = resources.getIdentifier(key, "string", requireContext().packageName)
+
+                    val drawableResId = resources.getIdentifier(
+                        "ic_illustration_${key}_40",
+                        "drawable",
+                        requireContext().packageName
+                    ).takeIf { it != 0 } ?: R.drawable.ic_illustration_sickness_40
+
+                    Specialty(specialty, stringResId, drawableResId)
+                }.sortedByDescending { specialtyCountMap[it.key] }
+
+                val recyclerSpecialists = view?.findViewById<RecyclerView>(R.id.recycler_specialists)
+                recyclerSpecialists?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                recyclerSpecialists?.adapter = SpecialtyAdapter(specialties) { selectedSpecialist ->
+                    val fragment = DoctorsFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("specialty", selectedSpecialist)
+                        }
+                    }
+                    replaceFragment(fragment)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "error: $error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 }
