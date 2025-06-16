@@ -17,7 +17,6 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentBookAppointmentBind
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
-import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -34,7 +33,7 @@ class BookAppointmentFragment : Fragment() {
 
     private var selectedDate: String = ""
     private var selectedTime: String? = null
-    private var doctorId: Int = 0
+    private var doctorId: String = ""
     private var workHours: List<WorkHours> = listOf()
     private var bookedTimeSlots: List<String> = listOf()
 
@@ -52,7 +51,7 @@ class BookAppointmentFragment : Fragment() {
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .reference
 
-        doctorId = arguments?.getInt("doctor_id") ?: 0
+        doctorId = arguments?.getString("doctor_id") ?: ""
         val doctorName = arguments?.getString("doctor_name") ?: "Unknown Doctor"
         binding.tvDoctorFullName.text = "Booking: $doctorName"
 
@@ -80,7 +79,7 @@ class BookAppointmentFragment : Fragment() {
     private fun fetchWorkHours(dayOfWeek: String) {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss a", Locale.ENGLISH)
 
-        firebaseRef.child("doctors").child(doctorId.toString()).get().addOnSuccessListener { snapshot ->
+        firebaseRef.child("doctors").child(doctorId).get().addOnSuccessListener { snapshot ->
             val doctor = snapshot.getValue(Doctor::class.java)
             val workHourIds = doctor?.workHourIds ?: listOf()
 
@@ -150,7 +149,7 @@ class BookAppointmentFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
         Log.d("BookAppointmentFragment", "User email: ${userId}")
 
-        firebaseRef.child("doctors").child(doctorId.toString()).get().addOnSuccessListener { snapshot ->
+        firebaseRef.child("doctors").child(doctorId).get().addOnSuccessListener { snapshot ->
             val doctor = snapshot.getValue(Doctor::class.java)
 
             val appointmentRef = firebaseRef.child("appointments").push()

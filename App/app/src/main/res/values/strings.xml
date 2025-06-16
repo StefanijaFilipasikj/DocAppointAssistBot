@@ -75,4 +75,10 @@
     <string name="submit_request">Submit Request</string>
     <string name="select_available_work_hours">Select Available Work Hours:</string>
     <string name="requests">Requests</string>
+    <string name="doctor_role_requests">Doctor Role Requests</string>
+    <string name="dr_full_name">Dr. Full Name</string>
+    <string name="view_documents">View Documents</string>
+    <string name="approve">Approve</string>
+    <string name="deny">Deny</string>
+    <string name="doctor_requests_list">Doctor Requests List</string>
 </resources>

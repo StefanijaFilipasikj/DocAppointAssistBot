@@ -11,7 +11,9 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorDetailsBindin
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.Hospital
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import mk.ukim.finki.docappointassistbot.domain.User
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,16 +23,16 @@ class DoctorDetailsFragment : Fragment() {
     private var _binding: FragmentDoctorDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private var doctorId: Int? = null
+    private var doctorId: String? = null
     private lateinit var firebaseRef: DatabaseReference
 
     companion object {
         private const val ARG_DOCTOR_ID = "id"
 
-        fun newInstance(doctorId: Int): DoctorDetailsFragment {
+        fun newInstance(doctorId: String): DoctorDetailsFragment {
             val fragment = DoctorDetailsFragment()
             val args = Bundle()
-            args.putInt(ARG_DOCTOR_ID, doctorId)
+            args.putString(ARG_DOCTOR_ID, doctorId)
             fragment.arguments = args
             return fragment
         }
@@ -38,7 +40,7 @@ class DoctorDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        doctorId = arguments?.getInt(ARG_DOCTOR_ID)
+        doctorId = arguments?.getString(ARG_DOCTOR_ID)
     }
 
     override fun onCreateView(
@@ -58,8 +60,8 @@ class DoctorDetailsFragment : Fragment() {
         doctorId?.let { fetchDoctor(it) }
     }
 
-    private fun fetchDoctor(doctorId: Int) {
-        firebaseRef.child(doctorId.toString()).get().addOnSuccessListener { snapshot ->
+    private fun fetchDoctor(doctorId: String) {
+        firebaseRef.child(doctorId).get().addOnSuccessListener { snapshot ->
             if (snapshot.exists()) {
                 val doctor = snapshot.getValue(Doctor::class.java)
 
@@ -74,7 +76,6 @@ class DoctorDetailsFragment : Fragment() {
                             }
                         }
                     }
-
                 }
             } else {
                 Toast.makeText(requireContext(), "Doctor not found", Toast.LENGTH_SHORT).show()
@@ -97,7 +98,6 @@ class DoctorDetailsFragment : Fragment() {
             callback(null)
         }
     }
-
 
     private fun fetchWorkHours(workHourIds: List<Int>, callback: (List<WorkHours>) -> Unit) {
         val workHours = mutableListOf<WorkHours>()
@@ -155,12 +155,22 @@ class DoctorDetailsFragment : Fragment() {
         binding.tvCityAndCountry.text = "${doctor.city}, ${doctor.country}"
         binding.tvHospitals.text = doctor.hospital?.name ?: "Unknown hospital"
 
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let {
+            val userRef = FirebaseDatabase.getInstance().getReference("users").child(it)
+            userRef.get().addOnSuccessListener { snapshot ->
+                val user = snapshot.getValue(User::class.java)
+                if (user?.role == "admin") {
+                    binding.btnBookAppointment.visibility = View.GONE
+                }
+            }
+        }
 
         binding.btnBookAppointment.setOnClickListener {
             val bookAppointmentFragment = BookAppointmentFragment()
             val bundle = Bundle()
             bundle.putString("doctor_name", doctor.fullname)
-            bundle.putInt("doctor_id", doctor.id)
+            bundle.putString("doctor_id", doctor.id)
             bookAppointmentFragment.arguments = bundle
 
             val fragmentTransaction = parentFragmentManager.beginTransaction()

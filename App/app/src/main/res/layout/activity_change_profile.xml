@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ChangeProfileActivity">
 
+    <!-- Title Text -->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -48,6 +49,78 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fullNameEditText"/>
 
+    <!-- City -->
+    <EditText
+        android:id="@+id/cityEditText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/city"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/photoUrlEditText"/>
+
+    <!-- Country -->
+    <EditText
+        android:id="@+id/countryEditText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/country"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cityEditText"/>
+
+    <!-- Specialty -->
+    <EditText
+        android:id="@+id/specialtyEditText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/specialty"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/countryEditText"/>
+
+    <!-- Bio -->
+    <EditText
+        android:id="@+id/bioEditText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/biography"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/specialtyEditText"/>
+
+    <!-- Experience -->
+    <EditText
+        android:id="@+id/experienceEditText"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/experience_in_years"
+        android:visibility="gone"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bioEditText"/>
+
+    <!-- Save Button -->
     <Button
         android:id="@+id/saveChanges"
         android:layout_width="match_parent"
@@ -58,6 +131,6 @@
         android:backgroundTint="@color/blue_500"
         android:text="@string/save_profile"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/photoUrlEditText"/>
+        app:layout_constraintTop_toBottomOf="@id/experienceEditText"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
