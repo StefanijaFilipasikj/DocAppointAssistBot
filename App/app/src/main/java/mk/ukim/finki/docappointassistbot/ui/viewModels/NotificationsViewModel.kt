@@ -18,7 +18,7 @@ import mk.ukim.finki.docappointassistbot.utils.NotificationScheduler
 
 class NotificationsViewModel(
     private val context: Context,
-    private val appointmentsViewModel: AppointmentsViewModel
+    appointmentsViewModel: AppointmentsViewModel
 ) : ViewModel() {
 
     private val _notifications = MutableLiveData<List<Notification>>()
@@ -93,7 +93,7 @@ class NotificationsViewModel(
             val savedState = sharedPrefs.getBoolean(notificationId.toString(), true)
 
             if (appointmentStatus == "Completed" || appointmentStatus == "Canceled") {
-                sharedPrefs.edit().remove(notificationId.toString()).apply()
+                sharedPrefs.edit() { remove(notificationId.toString()) }
             }
 
             if (appointmentStatus == "Canceled") {

@@ -12,6 +12,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import mk.ukim.finki.docappointassistbot.databinding.ActivitySignUpBinding
 import mk.ukim.finki.docappointassistbot.domain.User
+import androidx.core.net.toUri
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -59,7 +60,7 @@ class SignUpActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(binding.fullNameEditText.text.toString())
-                        .setPhotoUri(Uri.parse(binding.photoUrlEditText.text.toString()))
+                        .setPhotoUri(binding.photoUrlEditText.text.toString().toUri())
                         .build()
 
                     user?.updateProfile(profileUpdates)

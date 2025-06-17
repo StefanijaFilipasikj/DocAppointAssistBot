@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.*
-import mk.ukim.finki.docappointassistbot.adapter.DoctorsAdapter
+import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorsBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 
@@ -23,6 +23,16 @@ class DoctorsFragment : Fragment() {
     private lateinit var doctorListener: ValueEventListener
     private var isListenerAttached = false
 
+    companion object {
+        fun newInstance(specialty: String): DoctorsFragment {
+            val fragment = DoctorsFragment()
+            fragment.arguments = Bundle().apply {
+                putString("specialty", specialty)
+            }
+            return fragment
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,18 +44,29 @@ class DoctorsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val specialty = arguments?.getString("specialty")
+        if (specialty != null) {
+            val resId = requireContext().resources.getIdentifier(
+                specialty.lowercase(), "string", requireContext().packageName
+            )
+            if (resId != 0) {
+                binding.tvDoctors.text = getString(resId)
+            } else {
+                binding.tvDoctors.text = specialty
+            }
+        }
+
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors")
 
         doctors = arrayListOf()
-
         binding.doctors.layoutManager = LinearLayoutManager(context)
 
-        fetchData()
+        fetchData(specialty)
     }
 
-    private fun fetchData() {
+    private fun fetchData(specialty: String?) {
         doctorListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 doctors.clear()
@@ -53,12 +74,15 @@ class DoctorsFragment : Fragment() {
                     for (doctorSnap in snapshot.children) {
                         val doctor = doctorSnap.getValue(Doctor::class.java)
                         if (doctor != null) {
-                            doctors.add(doctor)
+                            if (specialty == null || doctor.specialty.equals(specialty, ignoreCase = true)) {
+                                doctors.add(doctor)
+                            }
                             Log.d("DoctorsFragment", "Doctor fetched: $doctor")
                         }
                     }
                 }
-                val adapter = DoctorsAdapter(doctors) { selectedDoctor ->
+
+                val adapter = DoctorAdapter(doctors) { selectedDoctor ->
                     val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.frameLayout, fragment)

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,9 +45,11 @@ class AppointmentsFragment : Fragment() {
         noAppointmentsTextView = binding.noAppointmentsTextView
 
         viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
-        adapter = AppointmentAdapter(emptyList()) { appointment ->
-            onCancelAppointment(appointment)
-        }
+        adapter = AppointmentAdapter(
+            emptyList(),
+            onCancel = { appointment -> onCancelAppointment(appointment) },
+            onClick = { appointment -> onClickAppointment(appointment) }
+        )
 
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.appointmentsRecyclerView.adapter = adapter
@@ -119,7 +122,7 @@ class AppointmentsFragment : Fragment() {
     private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
-            setBackgroundResource(R.drawable.bg_white_radius05)
+            setBackgroundResource(android.R.color.transparent)
         }
 
         if (status != null && selectedStatus != status) {
@@ -146,6 +149,22 @@ class AppointmentsFragment : Fragment() {
     private fun onCancelAppointment(appointment: Appointment) {
         viewModel.cancelAppointment(requireContext(), appointment)
         selectButton(null)
+    }
+
+    private fun onClickAppointment(appointment: Appointment) {
+        val bundle = bundleOf("appointmentId" to appointment.id)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, AppointmentDetailsFragment::class.java, bundle)
+            .addToBackStack(null).commit()
+
+        val fragment = AppointmentDetailsFragment().apply {
+            arguments = bundle;
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

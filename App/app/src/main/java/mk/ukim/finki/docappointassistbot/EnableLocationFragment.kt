@@ -10,18 +10,25 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import mk.ukim.finki.docappointassistbot.databinding.FragmentEnableLocationBinding
+import androidx.core.content.edit
 
 class EnableLocationFragment : Fragment() {
 
     private var _binding: FragmentEnableLocationBinding? = null
     private val binding get() = _binding!!
 
+    private val sharedPref by lazy {
+        requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+    }
+
     private val requestLocationPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
+            sharedPref.edit() { putBoolean("location_enabled", true) }
             Toast.makeText(requireContext(), "Location access enabled!", Toast.LENGTH_SHORT).show()
         } else {
+            sharedPref.edit() { putBoolean("location_enabled", true) }
             Toast.makeText(requireContext(), "Location access denied!", Toast.LENGTH_SHORT).show()
         }
     }

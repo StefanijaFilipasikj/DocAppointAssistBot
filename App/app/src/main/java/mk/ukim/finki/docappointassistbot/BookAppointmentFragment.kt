@@ -53,7 +53,7 @@ class BookAppointmentFragment : Fragment() {
 
         doctorId = arguments?.getString("doctor_id") ?: ""
         val doctorName = arguments?.getString("doctor_name") ?: "Unknown Doctor"
-        binding.tvDoctorFullName.text = "Booking: $doctorName"
+        binding.tvDoctorFullName.text = "${getString(R.string.booking)} ${doctorName}"
 
         timeSlotAdapter = TimeSlotAdapter { time -> selectedTime = time }
         binding.rvTimeSlots.layoutManager = GridLayoutManager(requireContext(), 3)
@@ -74,6 +74,11 @@ class BookAppointmentFragment : Fragment() {
                 Toast.makeText(requireContext(), "Select a time slot", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun fetchWorkHours(dayOfWeek: String) {

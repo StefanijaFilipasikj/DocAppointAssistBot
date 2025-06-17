@@ -20,7 +20,6 @@
     <string name="settings">Settings</string>
     <string name="view_details">View Details</string>
     <string name="book_appointment">Book Appointment</string>
-    <string name="hospitals">Hospitals:</string>
     <string name="doctor_overview">Doctor Overview</string>
     <string name="biography">Biography</string>
     <string name="schedule">Schedule</string>
@@ -59,6 +58,39 @@
     <string name="email_johndoe">Email: JohnDoe</string>
     <string name="username_johndoe">Username: JohnDoe</string>
     <string name="date_created_01_01_2020">Date Created: 01/01/2020</string>
+    <string name="hello">Hello</string>
+    <string name="how_do_you_feel_today">How do you feel today?</string>
+    <string name="upcoming_appointments">Upcoming Appointments</string>
+    <string name="browse_doctors_by_specialty">Browse Doctors by Specialty</string>
+    <string name="see_all">See All</string>
+    <string name="receive_updates_and_alerts">Receive updates and alerts</string>
+    <string name="current_location">Current Location</string>
+    <string name="allow_access_to_your_location">Allow access to your location</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="view_the_app_in_dark_mode">View the app in dark mode</string>
+    <string name="language">Language</string>
+    <string name="choose_your_preferred_language">Choose your preferred language</string>
+    <string name="switch_account">Switch account</string>
+    <string name="booking">Booking</string>
+    <string name="appointment_details">Appointment Details</string>
+    <string name="how_did_the_appointment_go">How did the appointment go?</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="enter_appointment_details">Enter appointment details</string>
+    <string name="doctor">Doctor</string>
+    <string name="date">Date</string>
+    <string name="details">Details:</string>
+    <string name="doctors_near_you">Doctors Near You</string>
+    <string name="cardiologist">Cardiologists</string>
+    <string name="neurologist">Neurologists</string>
+    <string name="gastroenterologist">Gastroenterologists</string>
+    <string name="dentist">Dentists</string>
+    <string name="dermatologist">Dermatologists</string>
+    <string name="psychiatrist">Psychiatrists</string>
+    <string name="allergist">Allergists</string>
+    <string name="nephrologist">Nephrologists</string>
+    <string name="pediatrician">Pediatricians</string>
+
     <string name="doctor_appointments_will_appear_here">Doctor appointments will appear here</string>
     <string name="appointments_list">Appointments list</string>
     <string name="send_doctor_request">Send Doctor request</string>
@@ -81,4 +113,13 @@
     <string name="approve">Approve</string>
     <string name="deny">Deny</string>
     <string name="doctor_requests_list">Doctor Requests List</string>
+    <string name="specialty_default">Specialty</string>
+
+    <string-array name="languages">
+        <item>EN</item>
+        <item>MK</item>
+        <item>FR</item>
+    </string-array>
+
+
 </resources>

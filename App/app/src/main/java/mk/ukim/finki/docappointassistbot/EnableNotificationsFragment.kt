@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.viewpager2.widget.ViewPager2
 import mk.ukim.finki.docappointassistbot.databinding.FragmentEnableNotificationsBinding
+import androidx.core.content.edit
 
 class EnableNotificationsFragment : Fragment() {
 
@@ -19,9 +20,14 @@ class EnableNotificationsFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
 
+    private val sharedPref by lazy {
+        requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
+    }
+
     private val requestNotificationPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
+        sharedPref.edit() { putBoolean("notifications_enabled", isGranted) }
         if (isGranted) {
             Toast.makeText(requireContext(), "Notifications enabled!", Toast.LENGTH_SHORT).show()
         } else {
@@ -39,7 +45,7 @@ class EnableNotificationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewPager = requireActivity().findViewById<ViewPager2>(R.id.viewPager)
+        viewPager = requireActivity().findViewById(R.id.viewPager)
 
         binding.btnTurnOnNotifications.setOnClickListener {
             requestNotificationPermission()

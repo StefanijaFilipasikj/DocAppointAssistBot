@@ -153,7 +153,7 @@ class DoctorDetailsFragment : Fragment() {
         binding.tvSchedule.text = workHoursText
 
         binding.tvCityAndCountry.text = "${doctor.city}, ${doctor.country}"
-        binding.tvHospitals.text = doctor.hospital?.name ?: "Unknown hospital"
+        binding.tvHospital.text = doctor.hospital?.name ?: "Unknown hospital"
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         userId?.let {

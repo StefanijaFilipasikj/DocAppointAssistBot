@@ -9,8 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import mk.ukim.finki.docappointassistbot.domain.Notification
 import mk.ukim.finki.docappointassistbot.R
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class NotificationsAdapter(var notifications: List<Notification>, var notificationStates: Map<Int, Boolean>, private val onNotificationStateChanged: (Int, Boolean) -> Unit) :
     RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
@@ -27,23 +25,18 @@ class NotificationsAdapter(var notifications: List<Notification>, var notificati
             isPast: Boolean,
             onNotificationStateChanged: (Int, Boolean) -> Unit
         ) {
-            // Set title and subtitle (appointment details)
             val appointment = notification.appointment
             val doctor = appointment.doctor
             title.text = appointment.startTime
             val hospitalName = doctor?.hospital?.name ?: "Unknown Hospital"
             subtitle.text = "${doctor?.fullname} | ${doctor?.specialty} | $hospitalName"
 
-            // Set the notification icon
             icon.setImageResource(R.drawable.ic_baseline_bell_24)
 
-            // Remove previous listener before setting a new one
             switch.setOnCheckedChangeListener(null)
 
-            // Set the switch state
             switch.isChecked = isChecked
 
-            // Disable switch for past notifications
             switch.isEnabled = !isPast
 
             switch.setOnCheckedChangeListener { _, isCheckedNow ->

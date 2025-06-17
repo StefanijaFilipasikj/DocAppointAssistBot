@@ -3,17 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="16dp"
     tools:context=".DoctorsFragment">
 
     <!-- Title -->
     <TextView
+        android:id="@+id/tvDoctors"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/doctors"
         android:gravity="center"
         android:textColor="@color/gray_900"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:layout_marginBottom="10dp" />
 

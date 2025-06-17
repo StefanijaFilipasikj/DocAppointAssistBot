@@ -61,7 +61,7 @@
         android:layout_marginEnd="32dp"
         android:backgroundTint="@color/blue_500"
         android:text="@string/change_profile"
-        android:textColor="@android:color/white"
+        android:textColor="@color/gray_000"
         android:layout_gravity="center"/>
 
     <Button
@@ -73,7 +73,7 @@
         android:layout_marginEnd="32dp"
         android:backgroundTint="@color/blue_500"
         android:text="@string/sign_out"
-        android:textColor="@android:color/white"
+        android:textColor="@color/gray_000"
         android:layout_gravity="center"/>
 
     <Button
