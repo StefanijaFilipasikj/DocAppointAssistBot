@@ -199,6 +199,11 @@ class SettingsFragment : Fragment() {
 
         val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
         sharedPref.edit() { putString("language", language) }
-        requireActivity().recreate()
+
+        binding.root.postDelayed({
+            activity?.recreate()
+        }, 200)
+
     }
+
 }
