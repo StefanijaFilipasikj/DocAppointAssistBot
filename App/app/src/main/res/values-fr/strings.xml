@@ -79,6 +79,7 @@
     <string name="save">Enregistrer</string>
     <string name="enter_appointment_details">Entrez les détails du rendez-vous</string>
     <string name="doctor">Médecin</string>
+    <string name="patient">Patient</string>
     <string name="specialty">Spécialité</string>
     <string name="date">Date</string>
     <string name="details">Détails:</string>

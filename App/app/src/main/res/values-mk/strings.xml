@@ -79,6 +79,7 @@
     <string name="save">Зачувај</string>
     <string name="enter_appointment_details">Внесете детали за терминот</string>
     <string name="doctor">Доктор</string>
+    <string name="patient">Пациент</string>
     <string name="specialty">Специјалност</string>
     <string name="date">Датум</string>
     <string name="details">Детали:</string>

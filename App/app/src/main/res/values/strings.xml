@@ -78,6 +78,7 @@
     <string name="save">Save</string>
     <string name="enter_appointment_details">Enter appointment details</string>
     <string name="doctor">Doctor</string>
+    <string name="patient">Patient</string>
     <string name="date">Date</string>
     <string name="details">Details:</string>
     <string name="doctors_near_you">Doctors Near You</string>
@@ -94,7 +95,7 @@
     <string name="doctor_appointments_will_appear_here">Doctor appointments will appear here</string>
     <string name="appointments_list">Appointments list</string>
     <string name="send_doctor_request">Send Doctor request</string>
-    <string name="hospital">Hospital:</string>
+    <string name="hospital">Hospital</string>
     <string name="photo_url">Photo Url</string>
     <string name="doctor_role_request">Doctor Role Request</string>
     <string name="city">City</string>

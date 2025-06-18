@@ -58,7 +58,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="20dp"
         android:hint="@string/city"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/photoUrlEditText"/>
@@ -72,7 +71,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="20dp"
         android:hint="@string/country"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cityEditText"/>
@@ -86,7 +84,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="20dp"
         android:hint="@string/specialty"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/countryEditText"/>
@@ -100,7 +97,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="20dp"
         android:hint="@string/biography"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/specialtyEditText"/>
@@ -114,7 +110,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginTop="20dp"
         android:hint="@string/experience_in_years"
-        android:visibility="gone"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -131,6 +126,6 @@
         android:backgroundTint="@color/blue_500"
         android:text="@string/save_profile"
         android:textColor="@color/gray_000"
-        app:layout_constraintTop_toBottomOf="@id/photoUrlEditText"/>
+        app:layout_constraintTop_toBottomOf="@id/experienceEditText"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
