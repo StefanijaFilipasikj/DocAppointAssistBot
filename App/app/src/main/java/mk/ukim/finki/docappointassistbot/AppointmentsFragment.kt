@@ -49,8 +49,9 @@ class AppointmentsFragment : Fragment() {
 
         adapter = AppointmentAdapter(
             emptyList(),
+            onClick = { appointment -> onClickAppointment(appointment) },
             onCancel = { appointment -> onCancelAppointment(appointment) },
-            onClick = { appointment -> onClickAppointment(appointment) }
+            enableCancel = true
         )
 
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -77,18 +78,9 @@ class AppointmentsFragment : Fragment() {
 
         viewModel.fetchAppointments()
 
-        binding.tvUpcoming.setOnClickListener {
-            filterAppointments("Upcoming")
-            selectButton(binding.tvUpcoming)
-        }
-        binding.tvCompleted.setOnClickListener {
-            filterAppointments("Completed")
-            selectButton(binding.tvCompleted)
-        }
-        binding.tvCanceled.setOnClickListener {
-            filterAppointments("Canceled")
-            selectButton(binding.tvCanceled)
-        }
+        onFilterClick(binding.tvUpcoming, "Upcoming")
+        onFilterClick(binding.tvCompleted, "Completed")
+        onFilterClick(binding.tvCanceled, "Canceled")
     }
 
     private fun checkUserRoleAndLoadAppointments(userId: String) {
@@ -129,6 +121,22 @@ class AppointmentsFragment : Fragment() {
         } else {
             selectedStatus = null
         }
+    }
+
+    private fun onFilterClick(button: TextView, status: String) {
+        button.setOnClickListener {
+            if (selectedStatus == button) {
+                showAllAppointments()
+                selectButton(null)
+            } else {
+                filterAppointments(status)
+                selectButton(button)
+            }
+        }
+    }
+
+    private fun showAllAppointments() {
+        adapter.updateAppointments(viewModel.appointments.value ?: emptyList())
     }
 
     private fun filterAppointments(status: String) {

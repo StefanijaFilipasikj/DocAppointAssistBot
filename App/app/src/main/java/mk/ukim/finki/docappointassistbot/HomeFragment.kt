@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -55,12 +55,15 @@ class HomeFragment : Fragment() {
         if (user != null) {
             fetchUpcomingAppointments(user.email)
         }
-        viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
+        viewModel = activityViewModels<AppointmentsViewModel>().value
         appointmentsAdapter = AppointmentAdapter(
             emptyList(),
-            onCancel = { appointment -> onCancelAppointment(appointment) },
-            onClick = { appointment -> onClickAppointment(appointment) }
+            onClick = { appointment -> onClickAppointment(appointment) },
+            onCancel = { },
+            enableCancel = false
         )
+        binding.recyclerAppointments.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerAppointments.adapter = appointmentsAdapter
 
         // Browse by specialty
         fetchAndDisplaySpecialties()

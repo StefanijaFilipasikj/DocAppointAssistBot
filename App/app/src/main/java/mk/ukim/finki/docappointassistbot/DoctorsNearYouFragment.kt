@@ -32,11 +32,24 @@ class DoctorsNearYouFragment : Fragment() {
     private lateinit var googleMap: GoogleMap
     private var doctors: ArrayList<Doctor> = arrayListOf()
     private lateinit var firebaseRef: DatabaseReference
+    private val markerDoctorMap = mutableMapOf<String, String>()
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 101
 
     private val callback = OnMapReadyCallback { map ->
         googleMap = map
+
+        googleMap.setOnInfoWindowClickListener { marker ->
+            val doctorId = markerDoctorMap[marker.id]
+            if (doctorId != null) {
+                val doctorDetailsFragment = DoctorDetailsFragment.newInstance(doctorId)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.frameLayout, doctorDetailsFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+
         checkLocationPermissionAndFetch()
     }
 
@@ -99,12 +112,17 @@ class DoctorsNearYouFragment : Fragment() {
 
                 if (docLat != null && docLng != null) {
                     val docLatLng = LatLng(docLat, docLng)
-                    googleMap.addMarker(
+                    val marker = googleMap.addMarker(
                         MarkerOptions()
                             .position(docLatLng)
                             .title(doctor.fullname)
                             .snippet(doctor.specialty)
                     )
+                    marker?.id?.let { markerId ->
+                        doctor.id.let { doctorId ->
+                            markerDoctorMap[markerId] = doctorId
+                        }
+                    }
                 }
             }
         }
