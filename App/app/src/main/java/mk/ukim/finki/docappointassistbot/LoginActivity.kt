@@ -58,7 +58,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.loginButton.setOnClickListener {
-            loginUser(binding.emailEditText.text.toString(), binding.passwordEditText.text.toString())
+            val email = binding.emailEditText.text.toString().trim()
+            val password = binding.passwordEditText.text.toString().trim()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields!", Toast.LENGTH_SHORT).show()
+            }else{
+                loginUser(email, password)
+            }
         }
 
         binding.googleSignInButton.setOnClickListener {
