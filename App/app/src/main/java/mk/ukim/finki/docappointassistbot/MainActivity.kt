@@ -35,6 +35,9 @@ class MainActivity : AppCompatActivity() {
     private var isAdmin = false
     private var isDoctor = false
 
+    private var lastNonNotificationFragment: Fragment? = null
+    private var isOnNotificationsScreen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -87,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
+            isOnNotificationsScreen = false
             when (it.itemId) {
                 R.id.home -> replaceFragment(HomeFragment())
                 R.id.doctors -> replaceFragment(DoctorsFragment())
@@ -143,13 +147,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            R.id.notifications -> replaceFragment(NotificationsFragment())
+            R.id.notifications -> {
+                if (isOnNotificationsScreen && lastNonNotificationFragment != null) {
+                    replaceFragment(lastNonNotificationFragment!!)
+                } else {
+                    replaceFragment(NotificationsFragment())
+                }
+            }
             else -> {}
         }
         return true
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        if (fragment is NotificationsFragment) {
+            isOnNotificationsScreen = true
+        } else {
+            lastNonNotificationFragment = fragment
+            isOnNotificationsScreen = false
+        }
+
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
