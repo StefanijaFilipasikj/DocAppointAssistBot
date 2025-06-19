@@ -101,6 +101,7 @@
 
             <!-- Card with Details -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cvDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"

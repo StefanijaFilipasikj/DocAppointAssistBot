@@ -55,7 +55,7 @@ class NotificationsViewModel(
         for (appointment in appointments) {
             try {
                 val snapshot = dbRef.child("doctors")
-                    .child(appointment.doctorId.toString())
+                    .child(appointment.doctorId)
                     .get()
                     .await()
 

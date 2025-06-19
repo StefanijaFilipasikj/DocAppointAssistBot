@@ -20,10 +20,10 @@ class DoctorRequestActivity : AppCompatActivity() {
     private lateinit var profileImageEditText: EditText
     private lateinit var cityEditText: EditText
     private lateinit var countryEditText: EditText
-    private lateinit var specialtyEditText: EditText
     private lateinit var bioEditText: EditText
     private lateinit var experienceEditText: EditText
     private lateinit var hospitalSpinner: Spinner
+    private lateinit var specialtySpinner: Spinner
     private lateinit var uploadCvButton: Button
     private lateinit var cvFileNameTextView: TextView
     private lateinit var workHoursContainer: LinearLayout
@@ -32,8 +32,8 @@ class DoctorRequestActivity : AppCompatActivity() {
     private var selectedCvUri: Uri? = null
     private val selectedWorkHourIds = mutableSetOf<Int>()
     private var hospitals = mutableListOf<Pair<Int, String>>()
+    private var specialties = mutableListOf<String>()
     private lateinit var pdfPickerLauncher: ActivityResultLauncher<Intent>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +41,7 @@ class DoctorRequestActivity : AppCompatActivity() {
 
         bindViews()
         loadHospitals()
+        loadSpecialties()
         loadWorkHours()
         loadCurrentUserData()
 
@@ -67,7 +68,7 @@ class DoctorRequestActivity : AppCompatActivity() {
         profileImageEditText = findViewById(R.id.profileImageEditText)
         cityEditText = findViewById(R.id.cityEditText)
         countryEditText = findViewById(R.id.countryEditText)
-        specialtyEditText = findViewById(R.id.specialtyEditText)
+        specialtySpinner = findViewById(R.id.specialtySpinner)
         bioEditText = findViewById(R.id.bioEditText)
         experienceEditText = findViewById(R.id.experienceEditText)
         hospitalSpinner = findViewById(R.id.hospitalSpinner)
@@ -97,6 +98,26 @@ class DoctorRequestActivity : AppCompatActivity() {
                 )
             }
             .addOnFailureListener { toast("Failed loading hospitals") }
+    }
+
+    private fun loadSpecialties() {
+        FirebaseDatabase.getInstance()
+            .getReference("specialties")
+            .get()
+            .addOnSuccessListener { snap ->
+                specialties.clear()
+                for (child in snap.children) {
+                    val specialty = child.getValue(String::class.java) ?: continue
+                    specialties.add(specialty)
+                }
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    specialties
+                )
+                specialtySpinner.adapter = adapter
+            }
+            .addOnFailureListener { toast("Failed loading specialties") }
     }
 
     private fun loadWorkHours() {
@@ -147,6 +168,7 @@ class DoctorRequestActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return toast("Please log in")
         val hospitalId = hospitals.getOrNull(hospitalSpinner.selectedItemPosition)?.first
             ?.takeIf { it >= 0 }
+        val specialty = specialtySpinner.selectedItem as? String ?: ""
 
         val request = DoctorRequest(
             userId = uid,
@@ -154,7 +176,7 @@ class DoctorRequestActivity : AppCompatActivity() {
             profileImageUrl = profileImageEditText.text.toString(),
             city = cityEditText.text.toString(),
             country = countryEditText.text.toString(),
-            specialty = specialtyEditText.text.toString(),
+            specialty = specialty,
             bio = bioEditText.text.toString(),
             experience = experienceEditText.text.toString().toDoubleOrNull() ?: 0.0,
             hospitalId = hospitalId,

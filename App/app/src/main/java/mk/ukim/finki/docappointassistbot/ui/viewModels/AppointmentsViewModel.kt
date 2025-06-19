@@ -13,6 +13,8 @@ class AppointmentsViewModel : ViewModel() {
     private val _appointments = MutableLiveData<List<Appointment>>()
     val appointments: LiveData<List<Appointment>> get() = _appointments
 
+    private var allDoctorAppointments: List<Appointment> = emptyList()
+
     init {
         fetchAppointments()
     }
@@ -20,6 +22,19 @@ class AppointmentsViewModel : ViewModel() {
     fun fetchAppointments() {
         repository.getAppointments().observeForever {
             _appointments.value = it
+        }
+    }
+
+    fun fetchAppointmentsForDoctor(doctorId: String) {
+        repository.getAppointmentsForDoctor(doctorId).observeForever { fetchedAppointments ->
+            allDoctorAppointments = fetchedAppointments
+            _appointments.value = fetchedAppointments
+        }
+    }
+
+    fun filterDoctorAppointmentsByStatus(status: String): List<Appointment> {
+        return allDoctorAppointments.filter {
+            it.status.equals(status, ignoreCase = true)
         }
     }
 

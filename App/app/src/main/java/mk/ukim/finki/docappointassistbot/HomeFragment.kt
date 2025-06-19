@@ -184,7 +184,7 @@ class HomeFragment : Fragment() {
                 recyclerSpecialists?.adapter = SpecialtyAdapter(specialties) { selectedSpecialist ->
                     val fragment = DoctorsFragment().apply {
                         arguments = Bundle().apply {
-                            putString("specialty", selectedSpecialist)
+                            putString("specialty", selectedSpecialist.trim())
                         }
                     }
                     replaceFragment(fragment)

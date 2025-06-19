@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DocAppointAssistBot</string>
+    <string name="app_name">MediBot</string>
     <string name="doctor_image">Слика на докторот</string>
     <string name="view_doctors">Погледни доктори</string>
     <string name="app_logo">Лого на апликацијата</string>
@@ -79,6 +79,7 @@
     <string name="save">Зачувај</string>
     <string name="enter_appointment_details">Внесете детали за терминот</string>
     <string name="doctor">Доктор</string>
+    <string name="patient">Пациент</string>
     <string name="specialty">Специјалност</string>
     <string name="date">Датум</string>
     <string name="details">Детали:</string>
