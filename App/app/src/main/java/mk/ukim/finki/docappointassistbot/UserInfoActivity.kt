@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -36,7 +37,7 @@ class UserInfoActivity : AppCompatActivity() {
                             binding.email.text = u.email
                             binding.username.text = u.fullName
 
-                            if (u.role == "admin") {
+                            if (u.role == "admin" || u.role == "doctor") {
                                 binding.requestDoctorButton.visibility = View.GONE
                             }
 
@@ -51,7 +52,7 @@ class UserInfoActivity : AppCompatActivity() {
                                 Glide.with(this@UserInfoActivity)
                                     .load(u.photoUrl)
                                     .circleCrop()
-                                    .placeholder(R.drawable.ic_baseline_user_24)
+                                    .placeholder(getUserPlaceholder(this@UserInfoActivity))
                                     .into(binding.userIcon)
                             }
                         }
@@ -114,6 +115,18 @@ class UserInfoActivity : AppCompatActivity() {
                     ).show()
                 }
             })
+        }
+    }
+
+    private fun getUserPlaceholder(context: Context): Int {
+        val isDarkMode = (context.resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        return if (isDarkMode) {
+            R.drawable.ic_baseline_user_24_white
+        } else {
+            R.drawable.ic_baseline_user_24
         }
     }
 }

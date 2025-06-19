@@ -55,8 +55,10 @@ class AppointmentDetailsFragment : Fragment() {
                         getPatientName(appointment.userId) { patientName ->
                             binding.tvDoctorFullName.text = "${getString(R.string.patient)}: $patientName"
                         }
+                        showTextMode()
                     } else {
                         binding.tvDoctorFullName.text = "${getString(R.string.doctor)}: ${appointment.doctor?.fullname}"
+                        hideDetailsSection()
                     }
                 }
             }
@@ -64,27 +66,6 @@ class AppointmentDetailsFragment : Fragment() {
             binding.tvSpecialty.text = "${getString(R.string.specialty)}: ${appointment.doctor?.specialty}"
             binding.tvHospital.text = "${getString(R.string.hospital)}: ${appointment.doctor?.hospital?.name}"
             binding.tvAppointmentDateTime.text = "${getString(R.string.date)}: ${appointment.startTime}"
-
-            fun showTextMode() {
-                val details = appointment.details?.trim()
-                if (details.isNullOrEmpty()) {
-                    binding.detailsText.text = getString(R.string.enter_appointment_details)
-                } else {
-                    binding.detailsText.text = details
-                }
-                binding.detailsText.visibility = View.VISIBLE
-                binding.editButton.visibility = View.VISIBLE
-                binding.detailsInput.visibility = View.GONE
-                binding.saveButton.visibility = View.GONE
-            }
-
-            fun showEditMode() {
-                binding.detailsInput.setText(appointment.details)
-                binding.detailsText.visibility = View.GONE
-                binding.editButton.visibility = View.GONE
-                binding.detailsInput.visibility = View.VISIBLE
-                binding.saveButton.visibility = View.VISIBLE
-            }
 
             binding.editButton.setOnClickListener {
                 showEditMode()
@@ -97,8 +78,36 @@ class AppointmentDetailsFragment : Fragment() {
                     showTextMode()
                 }
             }
-            showTextMode()
         }
+    }
+
+    private fun showTextMode() {
+        val details = appointment.details?.trim()
+        if (details.isNullOrEmpty()) {
+            binding.detailsText.text = getString(R.string.enter_appointment_details)
+        } else {
+            binding.detailsText.text = details
+        }
+        binding.detailsText.visibility = View.VISIBLE
+        binding.editButton.visibility = View.VISIBLE
+        binding.detailsInput.visibility = View.GONE
+        binding.saveButton.visibility = View.GONE
+    }
+
+    private fun showEditMode() {
+        binding.detailsInput.setText(appointment.details)
+        binding.detailsText.visibility = View.GONE
+        binding.editButton.visibility = View.GONE
+        binding.detailsInput.visibility = View.VISIBLE
+        binding.saveButton.visibility = View.VISIBLE
+    }
+
+    private fun hideDetailsSection() {
+        binding.tvDetails.visibility = View.GONE
+        binding.cvDetails.visibility = View.GONE
+        binding.detailsInput.visibility = View.GONE
+        binding.editButton.visibility = View.GONE
+        binding.saveButton.visibility = View.GONE
     }
 
     private fun fetchUserRole(userId: String, callback: (String) -> Unit) {

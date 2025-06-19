@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DocAppointAssistBot</string>
+    <string name="app_name">MediBot</string>
     <string name="doctor_image">Image du médecin</string>
     <string name="view_doctors">Voir les médecins</string>
     <string name="app_logo">Logo de l`application</string>

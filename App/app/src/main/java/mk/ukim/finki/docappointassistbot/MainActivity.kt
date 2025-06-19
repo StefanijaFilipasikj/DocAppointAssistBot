@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private var isAdmin = false
+    private var isDoctor = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -61,8 +62,11 @@ class MainActivity : AppCompatActivity() {
 
         checkIfAdmin { admin ->
             isAdmin = admin
-            setupBottomNavigation()
-            invalidateOptionsMenu() // refresh top menu
+            checkIfDoctor { doctor ->
+                isDoctor = doctor
+                setupBottomNavigation()
+                invalidateOptionsMenu()
+            }
         }
 
         createNotificationChannel()
@@ -74,7 +78,11 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigationView.menu.clear()
             binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
             replaceFragment(AdminRequestsFragment())
-        } else {
+        } else if (isDoctor){
+            binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
+            replaceFragment(DoctorsFragment())
+        }
+        else {
             replaceFragment(HomeFragment())
         }
 
@@ -97,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (isAdmin) {
+        if (isAdmin || isDoctor) {
             menu.findItem(R.id.notifications)?.isVisible = false
         }
 
@@ -211,4 +219,24 @@ class MainActivity : AppCompatActivity() {
             callback(false)
         }
     }
+
+    private fun checkIfDoctor(callback: (Boolean) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val database = FirebaseDatabase.getInstance()
+            val userRef = database.getReference("users").child(user.uid)
+
+            userRef.get()
+                .addOnSuccessListener { snapshot ->
+                    val role = snapshot.child("role").getValue(String::class.java)
+                    callback(role == "doctor")
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +81,7 @@ class AppointmentAdapter(
             Glide.with(holder.itemView.context)
                 .load(patientPhotoUrl)
                 .centerCrop()
-                .placeholder(R.drawable.ic_baseline_user_24)
+                .placeholder(getUserPlaceholder(holder.itemView.context))
                 .into(binding.doctorImage)
         }
 
@@ -112,7 +113,7 @@ class AppointmentAdapter(
         Glide.with(holder.itemView.context)
             .load(currentItem.doctor?.image)
             .centerCrop()
-            .placeholder(R.drawable.ic_launcher_background)
+            .placeholder(getUserPlaceholder(holder.itemView.context))
             .into(binding.doctorImage)
 
         binding.btnCancel.visibility = if (currentItem.status.equals("Upcoming", ignoreCase = true)) {
@@ -158,4 +159,17 @@ class AppointmentAdapter(
                 }
             })
     }
+
+    private fun getUserPlaceholder(context: Context): Int {
+        val isDarkMode = (context.resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        return if (isDarkMode) {
+            R.drawable.ic_baseline_user_24_white
+        } else {
+            R.drawable.ic_baseline_user_24
+        }
+    }
+
 }

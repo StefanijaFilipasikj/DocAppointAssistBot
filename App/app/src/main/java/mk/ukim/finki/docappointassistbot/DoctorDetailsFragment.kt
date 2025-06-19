@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -134,7 +135,7 @@ class DoctorDetailsFragment : Fragment() {
         Glide.with(requireContext())
             .load(doctor.image)
             .centerCrop()
-            .placeholder(R.drawable.ic_launcher_background)
+            .placeholder(getUserPlaceholder(requireContext()))
             .into(binding.doctorImage)
 
         binding.tvFullName.text = doctor.fullname
@@ -160,7 +161,7 @@ class DoctorDetailsFragment : Fragment() {
             val userRef = FirebaseDatabase.getInstance().getReference("users").child(it)
             userRef.get().addOnSuccessListener { snapshot ->
                 val user = snapshot.getValue(User::class.java)
-                if (user?.role == "admin") {
+                if (user?.role == "admin" || user?.role == "doctor") {
                     binding.btnBookAppointment.visibility = View.GONE
                 }
             }
@@ -193,5 +194,17 @@ class DoctorDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getUserPlaceholder(context: Context): Int {
+        val isDarkMode = (context.resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        return if (isDarkMode) {
+            R.drawable.ic_baseline_user_24_white
+        } else {
+            R.drawable.ic_baseline_user_24
+        }
     }
 }
