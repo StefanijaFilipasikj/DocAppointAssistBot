@@ -67,14 +67,21 @@
             android:layout_marginBottom="12dp"/>
 
         <!-- Specialty -->
-        <EditText
-            android:id="@+id/specialtyEditText"
+        <TextView
+            android:id="@+id/textSpecialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/specialty"
+            android:layout_marginBottom="8dp"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/specialtySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:hint="@string/specialty"
-            android:inputType="text"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="12dp" />
 
         <!-- Bio -->
         <EditText
