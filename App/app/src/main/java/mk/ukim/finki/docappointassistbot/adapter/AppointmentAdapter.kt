@@ -16,7 +16,8 @@ import androidx.core.view.isVisible
 class AppointmentAdapter(
     private var appointments: List<Appointment>,
     private val onCancel: (Appointment) -> Unit,
-    private val onClick: (Appointment) -> Unit
+    private val onClick: (Appointment) -> Unit,
+    private val enableCancel: Boolean = true
 ) : RecyclerView.Adapter<AppointmentAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemAppointmentBinding) : RecyclerView.ViewHolder(binding.root)
@@ -116,7 +117,7 @@ class AppointmentAdapter(
             .placeholder(getUserPlaceholder(holder.itemView.context))
             .into(binding.doctorImage)
 
-        binding.btnCancel.visibility = if (currentItem.status.equals("Upcoming", ignoreCase = true)) {
+        binding.btnCancel.visibility = if (enableCancel && currentItem.status.equals("Upcoming", ignoreCase = true)) {
             View.VISIBLE
         } else {
             View.GONE
