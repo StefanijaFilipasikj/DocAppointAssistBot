@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +35,7 @@ class DoctorAdapter(
                 Glide.with(holder.itemView.context)
                     .load(currentItem.image)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_launcher_background)
+                    .placeholder(getUserPlaceholder(holder.itemView.context))
                     .into(doctorImage)
 
                 btnViewDoctorDetails.setOnClickListener{
@@ -47,5 +48,17 @@ class DoctorAdapter(
     fun updateDoctors(newDoctors: List<Doctor>) {
         this.doctors = newDoctors
         notifyDataSetChanged()
+    }
+
+    private fun getUserPlaceholder(context: Context): Int {
+        val isDarkMode = (context.resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        return if (isDarkMode) {
+            R.drawable.ic_baseline_user_24_white
+        } else {
+            R.drawable.ic_baseline_user_24
+        }
     }
 }

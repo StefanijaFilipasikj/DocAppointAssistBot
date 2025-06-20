@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/formContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/doctor_role_request"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <!-- Full Name -->
+        <EditText
+            android:id="@+id/fullNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp"
+            android:hint="@string/fullName"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="12dp"/>
+
+
+        <!-- Profile Image -->
+        <EditText
+            android:id="@+id/profileImageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="@string/photo_url"
+            android:inputType="textUri"
+            android:layout_marginBottom="12dp" />
+
+        <!-- City -->
+        <EditText
+            android:id="@+id/cityEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="@string/city"
+            android:inputType="text"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Country -->
+        <EditText
+            android:id="@+id/countryEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="@string/country"
+            android:inputType="text"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Specialty -->
+        <TextView
+            android:id="@+id/textSpecialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/specialty"
+            android:layout_marginBottom="8dp"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <Spinner
+            android:id="@+id/specialtySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Bio -->
+        <EditText
+            android:id="@+id/bioEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/bio"
+            android:inputType="textMultiLine"
+            android:minLines="4"
+            android:gravity="top"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Experience -->
+        <EditText
+            android:id="@+id/experienceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="@string/experience_in_years"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/textHospital"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hospital"
+            android:layout_marginBottom="8dp"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <!-- Hospital Dropdown -->
+        <Spinner
+            android:id="@+id/hospitalSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginBottom="12dp"/>
+
+
+        <!-- CV Upload -->
+        <TextView
+            android:id="@+id/cvFileNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_file_selected"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/uploadCvButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_cv_pdf"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Work Hours Label -->
+        <TextView
+            android:id="@+id/workHoursLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_available_work_hours"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Container for Dynamic CheckBoxes -->
+        <LinearLayout
+            android:id="@+id/workHoursCheckboxContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp" />
+
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitRequestButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/submit_request"
+            android:backgroundTint="@color/blue_500"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+</ScrollView>

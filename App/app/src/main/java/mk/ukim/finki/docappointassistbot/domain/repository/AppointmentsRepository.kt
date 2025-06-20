@@ -47,6 +47,39 @@ class AppointmentsRepository {
         return appointmentsLiveData
     }
 
+    fun getAppointmentsForDoctor(doctorId: String): LiveData<List<Appointment>> {
+        val result = MutableLiveData<List<Appointment>>()
+        val appointments = mutableListOf<Appointment>()
+
+        val appointmentsRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("appointments")
+
+        appointmentsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                appointments.clear()
+
+                for (child in snapshot.children) {
+                    val appointment = child.getValue(Appointment::class.java)
+                    val firebaseKey = child.key
+
+                    if (appointment != null && appointment.doctorId == doctorId && firebaseKey != null) {
+                        updateAppointmentStatus(appointment, firebaseKey)
+                        fetchDoctorDetails(appointment)
+
+                        appointments.add(appointment)
+                    }
+                }
+                result.value = appointments
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                result.value = emptyList()
+            }
+        })
+        return result
+    }
+
+
     private fun fetchDoctorDetails(appointment: Appointment) {
         val doctorRef = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors/${appointment.doctorId}")
@@ -77,6 +110,7 @@ class AppointmentsRepository {
                     .find { it.id == hospitalId }
 
                 appointment.doctor?.hospital = hospital
+
 
                 if (!appointmentsList.contains(appointment)) {
                     appointmentsList.add(appointment)

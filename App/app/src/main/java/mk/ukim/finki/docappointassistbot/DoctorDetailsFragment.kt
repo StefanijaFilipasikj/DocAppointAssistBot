@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorDetailsBindin
 import mk.ukim.finki.docappointassistbot.domain.Doctor
 import mk.ukim.finki.docappointassistbot.domain.Hospital
 import mk.ukim.finki.docappointassistbot.domain.WorkHours
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import mk.ukim.finki.docappointassistbot.domain.User
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,16 +24,16 @@ class DoctorDetailsFragment : Fragment() {
     private var _binding: FragmentDoctorDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private var doctorId: Int? = null
+    private var doctorId: String? = null
     private lateinit var firebaseRef: DatabaseReference
 
     companion object {
         private const val ARG_DOCTOR_ID = "id"
 
-        fun newInstance(doctorId: Int): DoctorDetailsFragment {
+        fun newInstance(doctorId: String): DoctorDetailsFragment {
             val fragment = DoctorDetailsFragment()
             val args = Bundle()
-            args.putInt(ARG_DOCTOR_ID, doctorId)
+            args.putString(ARG_DOCTOR_ID, doctorId)
             fragment.arguments = args
             return fragment
         }
@@ -38,7 +41,7 @@ class DoctorDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        doctorId = arguments?.getInt(ARG_DOCTOR_ID)
+        doctorId = arguments?.getString(ARG_DOCTOR_ID)
     }
 
     override fun onCreateView(
@@ -58,8 +61,8 @@ class DoctorDetailsFragment : Fragment() {
         doctorId?.let { fetchDoctor(it) }
     }
 
-    private fun fetchDoctor(doctorId: Int) {
-        firebaseRef.child(doctorId.toString()).get().addOnSuccessListener { snapshot ->
+    private fun fetchDoctor(doctorId: String) {
+        firebaseRef.child(doctorId).get().addOnSuccessListener { snapshot ->
             if (snapshot.exists()) {
                 val doctor = snapshot.getValue(Doctor::class.java)
 
@@ -87,8 +90,9 @@ class DoctorDetailsFragment : Fragment() {
         val hospitalRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("hospitals")
+            .child(hospitalId.toString())
 
-        hospitalRef.child(hospitalId.toString()).get().addOnSuccessListener { snapshot ->
+        hospitalRef.get().addOnSuccessListener { snapshot ->
             val hospital = snapshot.getValue(Hospital::class.java)
             callback(hospital)
         }.addOnFailureListener {
@@ -131,7 +135,7 @@ class DoctorDetailsFragment : Fragment() {
         Glide.with(requireContext())
             .load(doctor.image)
             .centerCrop()
-            .placeholder(R.drawable.ic_launcher_background)
+            .placeholder(getUserPlaceholder(requireContext()))
             .into(binding.doctorImage)
 
         binding.tvFullName.text = doctor.fullname
@@ -152,11 +156,22 @@ class DoctorDetailsFragment : Fragment() {
         binding.tvCityAndCountry.text = "${doctor.city}, ${doctor.country}"
         binding.tvHospital.text = doctor.hospital?.name ?: "Unknown hospital"
 
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let {
+            val userRef = FirebaseDatabase.getInstance().getReference("users").child(it)
+            userRef.get().addOnSuccessListener { snapshot ->
+                val user = snapshot.getValue(User::class.java)
+                if (user?.role == "admin" || user?.role == "doctor") {
+                    binding.btnBookAppointment.visibility = View.GONE
+                }
+            }
+        }
+
         binding.btnBookAppointment.setOnClickListener {
             val bookAppointmentFragment = BookAppointmentFragment()
             val bundle = Bundle()
             bundle.putString("doctor_name", doctor.fullname)
-            bundle.putInt("doctor_id", doctor.id)
+            bundle.putString("doctor_id", doctor.id)
             bookAppointmentFragment.arguments = bundle
 
             val fragmentTransaction = parentFragmentManager.beginTransaction()
@@ -179,5 +194,17 @@ class DoctorDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getUserPlaceholder(context: Context): Int {
+        val isDarkMode = (context.resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        return if (isDarkMode) {
+            R.drawable.ic_baseline_user_24_white
+        } else {
+            R.drawable.ic_baseline_user_24
+        }
     }
 }

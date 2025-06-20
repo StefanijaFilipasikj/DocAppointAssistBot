@@ -27,25 +27,25 @@
                 android:textColor="@color/gray_900"
                 android:textSize="26sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="12dp"/>
 
-            <!-- Image -->
+            <!-- Image with rounded corners -->
             <ImageView
                 android:id="@+id/doctorImage"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:scaleType="centerCrop"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="8dp"
+                android:clipToOutline="true"/>
 
-            <!-- Full Name -->
+            <!-- Name -->
             <TextView
                 android:id="@+id/tvFullName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="4dp"
                 android:textColor="@color/gray_900"/>
 
             <!-- Specialty -->
@@ -54,102 +54,119 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                android:textColor="@color/gray_700"
+                android:layout_marginBottom="12dp" />
 
-            <!-- Stats: Patients, Experience, Reviews -->
+            <!-- Stats Card -->
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight="1"
+                android:background="@drawable/bg_blue200_radius10"
+                android:padding="12dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="2dp"
                 android:gravity="center"
-                android:layout_marginBottom="16dp">
+                android:clipToPadding="false">
 
                 <TextView
                     android:id="@+id/tvNumPatients"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:paddingVertical="20dp"
-                    android:paddingHorizontal="14dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/bg_blue200_radius20"
-                    android:text="@string/patients"/>
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:text="@string/patients"
+                    android:textColor="@color/blue_900" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:background="@color/gray_300"
+                    android:layout_marginHorizontal="8dp"/>
 
                 <TextView
                     android:id="@+id/tvYearsExperience"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:paddingVertical="20dp"
-                    android:paddingHorizontal="14dp"
-                    android:background="@drawable/bg_blue200_radius20"
-                    android:text="@string/experience"/>
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:text="@string/experience"
+                    android:textColor="@color/blue_900" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="32dp"
+                    android:background="@color/gray_300"
+                    android:layout_marginHorizontal="8dp"/>
 
                 <TextView
                     android:id="@+id/tvNumReviews"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:paddingVertical="20dp"
-                    android:paddingHorizontal="14dp"
-                    android:layout_marginStart="16dp"
-                    android:background="@drawable/bg_blue200_radius20"
-                    android:text="@string/reviews"/>
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:text="@string/reviews"
+                    android:textColor="@color/blue_900" />
             </LinearLayout>
 
-            <!-- Biography Section -->
+            <!-- Biography -->
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="@string/biography"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp"
-                android:textColor="@color/gray_900"/>
+                android:textColor="@color/gray_900"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/tvBiography"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/gray_800"
+                android:lineSpacingExtra="4dp"/>
 
-            <!-- Schedule Section -->
+            <!-- Schedule -->
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="@string/schedule"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp"
-                android:textColor="@color/gray_900"/>
+                android:textColor="@color/gray_900"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/tvSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/gray_800"
+                android:lineSpacingExtra="4dp"/>
 
-            <!-- Location Section -->
+            <!-- Location -->
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="@string/location"
                 android:textStyle="bold"
-                android:layout_marginBottom="4dp"
-                android:textColor="@color/gray_900"/>
+                android:textColor="@color/gray_900"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/tvCityAndCountry"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_800"/>
 
             <TextView
                 android:id="@+id/tvHospital"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" />
+                android:textColor="@color/gray_800"
+                android:layout_marginBottom="24dp"/>
 
             <!-- Appointment Button -->
             <Button
@@ -158,10 +175,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/book_appointment"
                 android:backgroundTint="@color/blue_500"
-                android:textColor="@color/gray_000"
+                android:textColor="@color/white"
                 android:padding="12dp"
                 app:cornerRadius="50dp"/>
-
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

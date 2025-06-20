@@ -13,8 +13,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import mk.ukim.finki.docappointassistbot.databinding.ActivityLoginBinding
+import mk.ukim.finki.docappointassistbot.domain.User
 
 class LoginActivity : AppCompatActivity() {
 
@@ -55,7 +58,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.loginButton.setOnClickListener {
-            loginUser(binding.emailEditText.text.toString(), binding.passwordEditText.text.toString())
+            val email = binding.emailEditText.text.toString().trim()
+            val password = binding.passwordEditText.text.toString().trim()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields!", Toast.LENGTH_SHORT).show()
+            }else{
+                loginUser(email, password)
+            }
         }
 
         binding.googleSignInButton.setOnClickListener {
@@ -73,6 +82,10 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val firebaseUser = auth.currentUser
+                    if (firebaseUser != null) {
+                        saveUserToDatabaseIfNotExists(firebaseUser)
+                    }
                     Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -89,6 +102,10 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val firebaseUser = auth.currentUser
+                    if (firebaseUser != null) {
+                        saveUserToDatabaseIfNotExists(firebaseUser)
+                    }
                     Toast.makeText(this, "Google Log-In Successful", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
@@ -98,4 +115,23 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
+
+    private fun saveUserToDatabaseIfNotExists(firebaseUser: FirebaseUser) {
+        val ref = FirebaseDatabase.getInstance().getReference("users").child(firebaseUser.uid)
+
+        ref.get().addOnSuccessListener { snapshot ->
+            if (!snapshot.exists()) {
+                val newUser = User(
+                    id = firebaseUser.uid.hashCode(),
+                    email = firebaseUser.email ?: "",
+                    fullName = firebaseUser.displayName ?: "",
+                    photoUrl = firebaseUser.photoUrl?.toString() ?: "",
+                    dateCreated = System.currentTimeMillis(),
+                    role = "patient"
+                )
+                ref.setValue(newUser)
+            }
+        }
+    }
+
 }

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +20,7 @@ import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.adapter.SpecialtyAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentHomeBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
+import mk.ukim.finki.docappointassistbot.domain.Specialty
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
 import mk.ukim.finki.docappointassistbot.utils.DoctorLocationUtil
 
@@ -54,40 +55,18 @@ class HomeFragment : Fragment() {
         if (user != null) {
             fetchUpcomingAppointments(user.uid)
         }
-        viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
+        viewModel = activityViewModels<AppointmentsViewModel>().value
         appointmentsAdapter = AppointmentAdapter(
             emptyList(),
-            onCancel = { appointment -> onCancelAppointment(appointment) },
-            onClick = { appointment -> onClickAppointment(appointment) }
+            onClick = { appointment -> onClickAppointment(appointment) },
+            onCancel = { },
+            enableCancel = false
         )
+        binding.recyclerAppointments.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerAppointments.adapter = appointmentsAdapter
 
         // Browse by specialty
-        //TODO: make this dynamic - get distinct specialties of all doctors
-        //TODO: map the photos ic_illustration_{specialty}_40 (make sure vector exists)
-        //TODO: sort in alphabetical order or by number of doctors in specialty
-        val specialties = listOf(
-            "Cardiologist" to R.drawable.ic_illustration_cardiologist_40,
-            "Neurologist" to R.drawable.ic_illustration_neurologist_40,
-            "Gastroenterologist" to R.drawable.ic_illustration_gastroenterologist_40,
-            "Dentist" to R.drawable.ic_illustration_dentist_40,
-            "Dermatologist" to R.drawable.ic_illustration_dermatologist_40,
-            "Psychiatrist" to R.drawable.ic_illustration_psychiatrist_40,
-            "Allergist" to R.drawable.ic_illustration_allergist_40,
-            "Nephrologist" to R.drawable.ic_illustration_nephrologist_40,
-            "Pediatrician" to R.drawable.ic_illustration_pediatrician_40,
-        )
-
-        val recyclerSpecialists = view.findViewById<RecyclerView>(R.id.recycler_specialists)
-        recyclerSpecialists.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerSpecialists.adapter = SpecialtyAdapter(specialties) { selectedSpecialist ->
-            val fragment = DoctorsFragment().apply {
-                arguments = Bundle().apply {
-                    putString("specialty", selectedSpecialist)
-                }
-            }
-            replaceFragment(fragment);
-        }
-
+        fetchAndDisplaySpecialties()
         binding.tvSeeAllSpecialties.setOnClickListener{
             replaceFragment(DoctorsFragment());
         }
@@ -172,6 +151,53 @@ class HomeFragment : Fragment() {
             .replace(R.id.frameLayout, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun fetchAndDisplaySpecialties(){
+        val dbRef = FirebaseDatabase
+            .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("doctors")
+
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val specialtyCountMap = mutableMapOf<String, Int>()
+
+                for (doctorSnap in snapshot.children) {
+                    val specialty = doctorSnap.child("specialty").getValue(String::class.java)?.trim()
+                    if (!specialty.isNullOrEmpty()) {
+                        specialtyCountMap[specialty] = specialtyCountMap.getOrDefault(specialty, 0) + 1
+                    }
+                }
+
+                val specialties = specialtyCountMap.map { (specialty, _) ->
+                    val key = specialty.lowercase().replace(" ", "_")
+                    val stringResId = resources.getIdentifier(key, "string", requireContext().packageName)
+
+                    val drawableResId = resources.getIdentifier(
+                        "ic_illustration_${key}_40",
+                        "drawable",
+                        requireContext().packageName
+                    ).takeIf { it != 0 } ?: R.drawable.ic_illustration_sickness_40
+
+                    Specialty(specialty, stringResId, drawableResId)
+                }.sortedByDescending { specialtyCountMap[it.key] }
+
+                val recyclerSpecialists = view?.findViewById<RecyclerView>(R.id.recycler_specialists)
+                recyclerSpecialists?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                recyclerSpecialists?.adapter = SpecialtyAdapter(specialties) { selectedSpecialist ->
+                    val fragment = DoctorsFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("specialty", selectedSpecialist.trim())
+                        }
+                    }
+                    replaceFragment(fragment)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "error: $error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 }

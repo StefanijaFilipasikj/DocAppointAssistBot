@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:icon="@drawable/ic_baseline_calendar_24" android:id="@+id/requests" android:title="@string/requests" />
+    <item android:icon="@drawable/ic_baseline_doctor_24" android:id="@+id/doctors" android:title="@string/doctors" />
+    <item android:icon="@drawable/ic_baseline_settings_24" android:id="@+id/settings" android:title="@string/settings" />
+</menu>

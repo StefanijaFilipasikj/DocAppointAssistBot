@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import mk.ukim.finki.docappointassistbot.databinding.ActivityMainBinding
 import mk.ukim.finki.docappointassistbot.domain.repository.AppointmentsRepository
 import mk.ukim.finki.docappointassistbot.utils.PermissionsUtils
@@ -30,6 +31,12 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
+
+    private var isAdmin = false
+    private var isDoctor = false
+
+    private var lastNonNotificationFragment: Fragment? = null
+    private var isOnNotificationsScreen = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -56,37 +63,60 @@ class MainActivity : AppCompatActivity() {
 
         AppointmentsRepository().checkAndUpdateStatusesForCurrentUser()
 
-        // Bottom navigation bar
-        if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
-        }
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.home -> replaceFragment(HomeFragment())
-                R.id.doctors -> replaceFragment(DoctorsFragment())
-                R.id.chatbot -> replaceFragment(ChatbotFragment())
-                R.id.appointments -> replaceFragment(AppointmentsFragment())
-                R.id.settings -> replaceFragment(SettingsFragment())
-                else -> {}
+        checkIfAdmin { admin ->
+            isAdmin = admin
+            checkIfDoctor { doctor ->
+                isDoctor = doctor
+                setupBottomNavigation()
+                invalidateOptionsMenu()
             }
-            true
         }
 
         createNotificationChannel()
 
     }
 
-    // Top navigation bar
+    private fun setupBottomNavigation() {
+        if (isAdmin) {
+            binding.bottomNavigationView.menu.clear()
+            binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
+            replaceFragment(AdminRequestsFragment())
+        } else if (isDoctor){
+            binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
+            replaceFragment(DoctorsFragment())
+        }
+        else {
+            replaceFragment(HomeFragment())
+        }
+
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            isOnNotificationsScreen = false
+            when (it.itemId) {
+                R.id.home -> replaceFragment(HomeFragment())
+                R.id.doctors -> replaceFragment(DoctorsFragment())
+                R.id.chatbot -> replaceFragment(ChatbotFragment())
+                R.id.appointments -> replaceFragment(AppointmentsFragment())
+                R.id.settings -> replaceFragment(SettingsFragment())
+                R.id.requests -> replaceFragment(AdminRequestsFragment())
+            }
+            true
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_nav, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        if (isAdmin || isDoctor) {
+            menu.findItem(R.id.notifications)?.isVisible = false
+        }
+
         val user = FirebaseAuth.getInstance().currentUser
         val loginItem = menu.findItem(R.id.login)
-
         loginItem.setIcon(R.drawable.ic_baseline_user_24)
+
         user?.let {
             Glide.with(this)
                 .asBitmap()
@@ -95,12 +125,10 @@ class MainActivity : AppCompatActivity() {
                 .circleCrop()
                 .into(object : CustomTarget<Bitmap>(64, 64) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        val drawable = BitmapDrawable(resources, resource)
-                        loginItem.icon = drawable
+                        loginItem.icon = BitmapDrawable(resources, resource)
                     }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {}
                 })
         }
         return super.onPrepareOptionsMenu(menu)
@@ -119,13 +147,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            R.id.notifications -> replaceFragment(NotificationsFragment())
+            R.id.notifications -> {
+                if (isOnNotificationsScreen && lastNonNotificationFragment != null) {
+                    replaceFragment(lastNonNotificationFragment!!)
+                } else {
+                    replaceFragment(NotificationsFragment())
+                }
+            }
             else -> {}
         }
         return true
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        if (fragment is NotificationsFragment) {
+            isOnNotificationsScreen = true
+        } else {
+            lastNonNotificationFragment = fragment
+            isOnNotificationsScreen = false
+        }
+
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
@@ -174,6 +215,44 @@ class MainActivity : AppCompatActivity() {
                     getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.createNotificationChannel(channel)
             }
+        }
+    }
+
+    private fun checkIfAdmin(callback: (Boolean) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val database = FirebaseDatabase.getInstance()
+            val userRef = database.getReference("users").child(user.uid)
+
+            userRef.get()
+                .addOnSuccessListener { snapshot ->
+                    val role = snapshot.child("role").getValue(String::class.java)
+                    callback(role == "admin")
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
+        }
+    }
+
+    private fun checkIfDoctor(callback: (Boolean) -> Unit) {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val database = FirebaseDatabase.getInstance()
+            val userRef = database.getReference("users").child(user.uid)
+
+            userRef.get()
+                .addOnSuccessListener { snapshot ->
+                    val role = snapshot.child("role").getValue(String::class.java)
+                    callback(role == "doctor")
+                }
+                .addOnFailureListener {
+                    callback(false)
+                }
+        } else {
+            callback(false)
         }
     }
 

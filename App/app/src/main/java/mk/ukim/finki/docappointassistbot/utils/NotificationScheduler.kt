@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import mk.ukim.finki.docappointassistbot.domain.Appointment
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.content.edit
 
 object NotificationScheduler {
 
@@ -43,7 +44,7 @@ object NotificationScheduler {
             appointment.id,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+                    PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -77,7 +78,7 @@ object NotificationScheduler {
             appointmentId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+                    PendingIntent.FLAG_IMMUTABLE
         )
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -86,11 +87,11 @@ object NotificationScheduler {
         Log.d("NotificationScheduler", "Notification canceled for appointment ID: $appointmentId")
 
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().remove("appointment_$appointmentId").apply()
+        prefs.edit() { remove("appointment_$appointmentId") }
 
         // Also remove the toggle state from notification preferences
         val togglePrefs = context.getSharedPreferences("notification_prefs", Context.MODE_PRIVATE)
-        togglePrefs.edit().remove(appointmentId.toString()).apply()
+        togglePrefs.edit() { remove(appointmentId.toString()) }
 
         Log.d("NotificationScheduler", "Removed toggle for appointment ID: $appointmentId from notification_prefs")
     }
@@ -99,7 +100,7 @@ object NotificationScheduler {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val key = "appointment_${appointment.id}"
         val json = Gson().toJson(appointment)
-        prefs.edit().putString(key, json).apply()
+        prefs.edit() {putString(key, json)}
     }
 
     fun getSavedNotificationStates(context: Context): Map<Int, Appointment> {
@@ -126,7 +127,7 @@ object NotificationScheduler {
 
         // Clear all shared preferences
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().clear().apply()
+        prefs.edit() { clear() }
 
         Log.d("NotificationScheduler", "All notifications and saved appointments cleared.")
     }

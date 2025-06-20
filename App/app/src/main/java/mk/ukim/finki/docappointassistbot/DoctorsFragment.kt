@@ -8,11 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorsBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
@@ -24,6 +20,8 @@ class DoctorsFragment : Fragment() {
 
     private lateinit var doctors: ArrayList<Doctor>
     private lateinit var firebaseRef: DatabaseReference
+    private lateinit var doctorListener: ValueEventListener
+    private var isListenerAttached = false
 
     companion object {
         fun newInstance(specialty: String): DoctorsFragment {
@@ -47,27 +45,33 @@ class DoctorsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val specialty = arguments?.getString("specialty")
-        if(specialty != null){
-            binding.tvDoctors.text = "${specialty}s";
+        if (specialty != null) {
+            val resId = requireContext().resources.getIdentifier(
+                specialty.lowercase(), "string", requireContext().packageName
+            )
+            if (resId != 0) {
+                binding.tvDoctors.text = getString(resId)
+            } else {
+                binding.tvDoctors.text = specialty
+            }
         }
 
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors")
-        doctors = arrayListOf()
-        fetchData(specialty)
 
+        doctors = arrayListOf()
         binding.doctors.layoutManager = LinearLayoutManager(context)
+
+        fetchData(specialty)
     }
 
     private fun fetchData(specialty: String?) {
-        doctors.clear();
-
-        firebaseRef.addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot){
+        doctorListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 doctors.clear()
-                if (snapshot.exists()){
-                    for (doctorSnap in snapshot.children){
+                if (snapshot.exists()) {
+                    for (doctorSnap in snapshot.children) {
                         val doctor = doctorSnap.getValue(Doctor::class.java)
                         if (doctor != null) {
                             if (specialty == null || doctor.specialty.equals(specialty, ignoreCase = true)) {
@@ -77,9 +81,9 @@ class DoctorsFragment : Fragment() {
                         }
                     }
                 }
-                val adapter = DoctorAdapter(doctors){ selectedDoctor ->
-                    val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
 
+                val adapter = DoctorAdapter(doctors) { selectedDoctor ->
+                    val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.frameLayout, fragment)
                         .addToBackStack(null)
@@ -89,13 +93,24 @@ class DoctorsFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "error: $error", Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("DoctorsFragment", "onCancelled called but fragment not attached: ${error.message}")
+                }
             }
-        })
+        }
+
+        firebaseRef.addValueEventListener(doctorListener)
+        isListenerAttached = true
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        if (isListenerAttached) {
+            firebaseRef.removeEventListener(doctorListener)
+            isListenerAttached = false
+        }
         _binding = null
+        super.onDestroyView()
     }
 }

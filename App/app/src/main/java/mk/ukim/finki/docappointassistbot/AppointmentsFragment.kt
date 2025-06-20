@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import mk.ukim.finki.docappointassistbot.adapter.AppointmentAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentAppointmentsBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
@@ -25,11 +26,17 @@ class AppointmentsFragment : Fragment() {
     private var selectedStatus: TextView? = null
     private lateinit var noAppointmentsTextView: TextView
 
+    private lateinit var database: DatabaseReference
+    private var role: String? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAppointmentsBinding.inflate(inflater, container, false)
+
+        database = FirebaseDatabase.getInstance().getReference("users")
+
         return binding.root
     }
 
@@ -38,11 +45,13 @@ class AppointmentsFragment : Fragment() {
 
         noAppointmentsTextView = binding.noAppointmentsTextView
 
-        viewModel = ViewModelProvider(this).get(AppointmentsViewModel::class.java)
+        viewModel = activityViewModels<AppointmentsViewModel>().value
+
         adapter = AppointmentAdapter(
             emptyList(),
+            onClick = { appointment -> onClickAppointment(appointment) },
             onCancel = { appointment -> onCancelAppointment(appointment) },
-            onClick = { appointment -> onClickAppointment(appointment) }
+            enableCancel = true
         )
 
         binding.appointmentsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -50,10 +59,10 @@ class AppointmentsFragment : Fragment() {
 
         val user = FirebaseAuth.getInstance().currentUser
 
-        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty() || user == null) {
-            View.VISIBLE
+        if (user != null) {
+            checkUserRoleAndLoadAppointments(user.uid)
         } else {
-            View.GONE
+            noAppointmentsTextView.visibility = View.VISIBLE
         }
 
         viewModel.appointments.observe(viewLifecycleOwner) { appointments ->
@@ -69,33 +78,44 @@ class AppointmentsFragment : Fragment() {
 
         viewModel.fetchAppointments()
 
-        binding.tvUpcoming.setOnClickListener {
-            filterAppointments("Upcoming")
-            selectButton(binding.tvUpcoming)
-        }
-        binding.tvCompleted.setOnClickListener {
-            filterAppointments("Completed")
-            selectButton(binding.tvCompleted)
-        }
-        binding.tvCanceled.setOnClickListener {
-            filterAppointments("Canceled")
-            selectButton(binding.tvCanceled)
-        }
+        onFilterClick(binding.tvUpcoming, "Upcoming")
+        onFilterClick(binding.tvCompleted, "Completed")
+        onFilterClick(binding.tvCanceled, "Canceled")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun checkUserRoleAndLoadAppointments(userId: String) {
+        database.child(userId).child("role").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                role = snapshot.getValue(String::class.java)
+                if (role == "doctor") {
+                    viewModel.fetchAppointmentsForDoctor(userId)
+                } else {
+                    setupPatientAppointments()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                noAppointmentsTextView.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    private fun setupPatientAppointments() {
+        noAppointmentsTextView.visibility = if (viewModel.appointments.value.isNullOrEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
     }
 
     private fun selectButton(status: TextView?) {
         selectedStatus?.apply {
             setTextColor(requireContext().getColor(R.color.gray_900))
-            setBackgroundResource(R.drawable.bg_white_radius05)
+            setBackgroundResource(android.R.color.transparent)
         }
 
         if (status != null && selectedStatus != status) {
-            status.setTextColor(requireContext().getColor(R.color.gray_000))
+            status.setTextColor(requireContext().getColor(R.color.white))
             status.setBackgroundResource(R.drawable.bg_blue500_radius05)
             selectedStatus = status
         } else {
@@ -103,10 +123,40 @@ class AppointmentsFragment : Fragment() {
         }
     }
 
+    private fun onFilterClick(button: TextView, status: String) {
+        button.setOnClickListener {
+            if (selectedStatus == button) {
+                showAllAppointments()
+                selectButton(null)
+            } else {
+                filterAppointments(status)
+                selectButton(button)
+            }
+        }
+    }
+
+    private fun showAllAppointments() {
+        adapter.updateAppointments(viewModel.appointments.value ?: emptyList())
+    }
+
     private fun filterAppointments(status: String) {
-        val filtered = viewModel.filterAppointments(status)
+        val filtered = if (role == "doctor") {
+            viewModel.filterDoctorAppointmentsByStatus(status)
+        } else {
+            viewModel.filterAppointments(status)
+        }
+
+        if (filtered.isEmpty()) {
+            noAppointmentsTextView.visibility = View.VISIBLE
+            binding.appointmentsRecyclerView.visibility = View.GONE
+        } else {
+            noAppointmentsTextView.visibility = View.GONE
+            binding.appointmentsRecyclerView.visibility = View.VISIBLE
+        }
+
         adapter.updateAppointments(filtered)
     }
+
 
     private fun onCancelAppointment(appointment: Appointment) {
         viewModel.cancelAppointment(requireContext(), appointment)
@@ -115,17 +165,20 @@ class AppointmentsFragment : Fragment() {
 
     private fun onClickAppointment(appointment: Appointment) {
         val bundle = bundleOf("appointmentId" to appointment.id)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, AppointmentDetailsFragment::class.java, bundle)
-            .addToBackStack(null).commit()
 
         val fragment = AppointmentDetailsFragment().apply {
-            arguments = bundle;
+            arguments = bundle
         }
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.frameLayout, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DocAppointAssistBot</string>
+    <string name="app_name">MediBot</string>
     <string name="doctor_image">Слика на докторот</string>
     <string name="view_doctors">Погледни доктори</string>
     <string name="app_logo">Лого на апликацијата</string>
@@ -18,9 +18,9 @@
     <string name="home">Дома</string>
     <string name="notifications">Известувања</string>
     <string name="settings">Поставки</string>
-    <string name="view_details">Погледни детали</string>
+    <string name="view_details">Детали</string>
     <string name="book_appointment">Закажи термин</string>
-    <string name="hospitals">Болници:</string>
+    <string name="hospital">Болницa</string>
     <string name="doctor_overview">Преглед на доктор</string>
     <string name="biography">Биографија</string>
     <string name="schedule">Распоред</string>
@@ -62,8 +62,8 @@
     <string name="hello">Здраво</string>
     <string name="how_do_you_feel_today">Како се чувствуваш денес?</string>
     <string name="upcoming_appointments">Закажани термини</string>
-    <string name="browse_doctors_by_specialty">Доктори по специјалност</string>
-    <string name="see_all">Погледни сè</string>
+    <string name="browse_doctors_by_specialty">Специјалисти</string>
+    <string name="see_all">Погледни ги сите</string>
     <string name="receive_updates_and_alerts">Receive updates and alerts</string>
     <string name="current_location">Моментална локација</string>
     <string name="allow_access_to_your_location">Дозволи пристап до твојата локација</string>
@@ -78,10 +78,49 @@
     <string name="edit">Измени</string>
     <string name="save">Зачувај</string>
     <string name="enter_appointment_details">Внесете детали за терминот</string>
+    <string name="doctor">Доктор</string>
+    <string name="patient">Пациент</string>
+    <string name="specialty">Специјалност</string>
+    <string name="date">Датум</string>
+    <string name="details">Детали:</string>
+    <string name="doctors_near_you">Доктори во близина</string>
+    <string name="cardiologist">Кардиолози</string>
+    <string name="neurologist">Невролози</string>
+    <string name="gastroenterologist">Гастроентеролози</string>
+    <string name="dentist">Забари</string>
+    <string name="dermatologist">Дерматолози</string>
+    <string name="psychiatrist">Психијатри</string>
+    <string name="allergist">Алерголози</string>
+    <string name="nephrologist">Нефролози</string>
+    <string name="pediatrician">Педијатари</string>
+
+    <string name="doctor_appointments_will_appear_here">Лекарските прегледи ќе се појават тука</string>
+    <string name="appointments_list">Список на термини</string>
+    <string name="send_doctor_request">Испрати барање за доктор</string>
+    <string name="photo_url">URL-адреса на фотографија</string>
+    <string name="doctor_role_request">Барање за улога на доктор</string>
+    <string name="city">Град</string>
+    <string name="country">Држава</string>
+    <string name="bio">Биографија</string>
+    <string name="experience_in_years">Искуство (во години)</string>
+    <string name="no_file_selected">Не е избрана датотека</string>
+    <string name="upload_cv_pdf">Поставете CV (PDF)</string>
+    <string name="submit_request">Поднесете барање</string>
+    <string name="select_available_work_hours">Изберете достапно работно време:</string>
+    <string name="requests">Барања</string>
+    <string name="doctor_role_requests">Барања за улога на доктор</string>
+    <string name="dr_full_name">Целосно име на доктор</string>
+    <string name="view_documents">Преглед на документи</string>
+    <string name="approve">Прифати</string>
+    <string name="deny">Одбиј</string>
+    <string name="doctor_requests_list">Листа на барања од доктор</string>
+    <string name="specialty_default">Специјалност</string>
 
     <string-array name="languages">
         <item>EN</item>
         <item>MK</item>
         <item>FR</item>
     </string-array>
+
+
 </resources>

@@ -10,6 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 
 object PermissionsUtils {
 
@@ -34,7 +35,7 @@ object PermissionsUtils {
         val needsAlarm = needsExactAlarmPermission(context)
 
         if ((needsNotification || needsAlarm) && !askedBefore) {
-            sharedPref.edit().putBoolean("notification_permission_asked", true).apply()
+            sharedPref.edit() { putBoolean("notification_permission_asked", true) }
 
             val message = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 "This app requires permission to send notifications and schedule exact alarms for your appointments. Please grant the necessary permissions in Settings."
@@ -82,12 +83,12 @@ object PermissionsUtils {
             val sharedPref = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sharedPref.edit().putBoolean("notifications_enabled", true).apply()
+                sharedPref.edit() { putBoolean("notifications_enabled", true) }
             } else {
                 val alreadyHandled = sharedPref.getBoolean("notification_permission_handled", false)
 
                 if (!alreadyHandled) {
-                    sharedPref.edit().putBoolean("notification_permission_handled", true).apply()
+                    sharedPref.edit() { putBoolean("notification_permission_handled", true) }
 
                     AlertDialog.Builder(context)
                         .setTitle("Permission Denied")

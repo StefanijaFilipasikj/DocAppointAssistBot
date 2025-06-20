@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.databinding.FragmentSettingsBinding
 import mk.ukim.finki.docappointassistbot.utils.PermissionsUtils
 import java.util.Locale
+import androidx.core.content.edit
 
 class SettingsFragment : Fragment() {
 
@@ -74,7 +75,7 @@ class SettingsFragment : Fragment() {
         binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                sharedPref.edit().putBoolean("location_enabled", true).apply()
+                sharedPref.edit() { putBoolean("location_enabled", true) }
             } else {
                 checkLocationStatus = true
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -90,7 +91,7 @@ class SettingsFragment : Fragment() {
         binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
             val newMode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(newMode)
-            sharedPref.edit().putInt("theme_mode", newMode).apply()
+            sharedPref.edit() { putInt("theme_mode", newMode) }
         }
 
         // Language
@@ -152,7 +153,7 @@ class SettingsFragment : Fragment() {
 
         val locationEnabled = isLocationEnabled(requireContext())
         binding.switchLocation.isChecked = locationEnabled
-        sharedPref.edit().putBoolean("location_enabled", locationEnabled).apply()
+        sharedPref.edit() { putBoolean("location_enabled", locationEnabled) }
 
         checkNotificationStatus = false
         checkLocationStatus = false
@@ -197,7 +198,12 @@ class SettingsFragment : Fragment() {
         )
 
         val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-        sharedPref.edit().putString("language", language).apply()
-        requireActivity().recreate()
+        sharedPref.edit() { putString("language", language) }
+
+        binding.root.postDelayed({
+            activity?.recreate()
+        }, 200)
+
     }
+
 }
