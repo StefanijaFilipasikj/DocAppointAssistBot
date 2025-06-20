@@ -151,7 +151,7 @@ class BookAppointmentFragment : Fragment() {
         val startTime = timeFormat.format(time)
         val endTime = timeFormat.format(calendar.time)
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
         Log.d("BookAppointmentFragment", "User email: ${userId}")
 
         firebaseRef.child("doctors").child(doctorId).get().addOnSuccessListener { snapshot ->

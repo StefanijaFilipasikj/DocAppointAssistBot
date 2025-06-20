@@ -48,12 +48,12 @@ class HomeFragment : Fragment() {
         // Chatbot
         binding.textHello.text = "${getString(R.string.hello)} ${user?.displayName ?: ""}"
         binding.cardChatWithChatbot.setOnClickListener {
-            replaceFragment(ChatbotFragment())
+            replaceFragment(ChatbotFragment.newInstance(user?.email, "patient"))
         }
 
         // Upcoming Appointments
         if (user != null) {
-            fetchUpcomingAppointments(user.uid)
+            fetchUpcomingAppointments(user.email)
         }
         viewModel = activityViewModels<AppointmentsViewModel>().value
         appointmentsAdapter = AppointmentAdapter(
@@ -106,13 +106,13 @@ class HomeFragment : Fragment() {
             .commit()
     }
 
-    private fun fetchUpcomingAppointments(uid: String?) {
+    private fun fetchUpcomingAppointments(userEmail: String?) {
         val appointmentsRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
         appointmentsRef.orderByChild("userId")
-            .equalTo(uid)
+            .equalTo(userEmail)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val upcomingAppointments = mutableListOf<Appointment>()

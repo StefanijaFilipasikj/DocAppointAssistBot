@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
 import mk.ukim.finki.docappointassistbot.adapter.ChatRecyclerAdapter
 import mk.ukim.finki.docappointassistbot.databinding.FragmentChatbotBinding
 import mk.ukim.finki.docappointassistbot.domain.MessagesModel
@@ -39,9 +38,25 @@ class ChatbotFragment : Fragment() {
 
     private var _binding: FragmentChatbotBinding? = null
     private val binding get() = _binding!!
+    private var patientId: String? = null
+    private var role: String? = null
 
     private lateinit var chatAdapter: ChatRecyclerAdapter
     private lateinit var viewModel: MessagesViewModel
+
+    companion object {
+        private const val ARG_PATIENT_ID = "id"
+        private const val ARG_ROLE = "role"
+
+        fun newInstance(patientId: String?, role: String?): ChatbotFragment {
+            val fragment = ChatbotFragment()
+            val args = Bundle()
+            args.putString(ARG_PATIENT_ID, patientId)
+            args.putString(ARG_ROLE, role)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 
     private val speechRecognizerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -60,6 +75,8 @@ class ChatbotFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChatbotBinding.inflate(inflater, container, false)
+        patientId = arguments?.getString(ARG_PATIENT_ID)
+        role = arguments?.getString(ARG_ROLE)
         return binding.root
     }
 
@@ -135,7 +152,6 @@ class ChatbotFragment : Fragment() {
     }
 
     fun buildJsonRequestBody(messages: List<MessagesModel>): String {
-        val user = FirebaseAuth.getInstance().currentUser
         val json = JSONObject()
         val messagesArray = JSONArray()
 
@@ -147,8 +163,8 @@ class ChatbotFragment : Fragment() {
         }
 
         json.put("messages", messagesArray)
-        json.put("role", "patient")
-        json.put("patient_id", user?.uid)
+        json.put("role", role)
+        json.put("patient_id", patientId)
         return json.toString()
     }
 }

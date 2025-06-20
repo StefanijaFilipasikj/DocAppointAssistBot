@@ -55,9 +55,9 @@ async def chat_endpoint(messages: MessagesList):
     llm = ChatOpenAI(streaming=True, temperature=0)
     system_message = "Use tools when needed. Dont make up information that is not from the medical history. If you cant find the information just say that there is not information. Dont generate bulletpoints or other symbols. Use this patient_id in the tools: " + messages.patient_id
     if messages.role == "patient":
-        system_message = "You are a helpful medical assistant for a patient. " + system_message
+        system_message = "You are a helpful medical assistant that is talking to a patient. " + system_message
     else:
-        system_message = "You are a helpful medical assistant for a doctor. " + system_message
+        system_message = "You are a helpful medical assistant that is talking to a doctor. " + system_message
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_message),

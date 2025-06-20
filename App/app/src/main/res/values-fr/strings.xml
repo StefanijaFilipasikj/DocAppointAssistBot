@@ -115,6 +115,8 @@
     <string name="deny">Refuser</string>
     <string name="doctor_requests_list">Liste des demandes des médecins</string>
     <string name="specialty_default">Spécialité</string>
+    <string name="my_patients">Mes patients</string>
+    <string name="write_message_here">Écrivez ici</string>
 
     <string-array name="languages">
         <item>EN</item>

@@ -115,6 +115,8 @@
     <string name="deny">Одбиј</string>
     <string name="doctor_requests_list">Листа на барања од доктор</string>
     <string name="specialty_default">Специјалност</string>
+    <string name="my_patients">Мои пациенти</string>
+    <string name="write_message_here">Напиши порака</string>
 
     <string-array name="languages">
         <item>EN</item>
