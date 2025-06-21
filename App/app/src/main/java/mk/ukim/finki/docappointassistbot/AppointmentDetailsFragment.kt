@@ -53,6 +53,8 @@ class AppointmentDetailsFragment : Fragment() {
             }
 
             appointment = appointmentFound
+            if (appointment.status.trim() != "Upcoming")
+                binding.editButton.visibility = View.GONE
 
             val currentUser = FirebaseAuth.getInstance().currentUser
             if (currentUser != null) {
@@ -111,11 +113,12 @@ class AppointmentDetailsFragment : Fragment() {
         val details = appointment.details?.trim()
         if (details.isNullOrEmpty()) {
             binding.detailsText.text = getString(R.string.enter_appointment_details)
+            binding.editButton.visibility = View.VISIBLE
         } else {
             binding.detailsText.text = details
+            binding.editButton.visibility = View.GONE
         }
         binding.detailsText.visibility = View.VISIBLE
-        binding.editButton.visibility = View.VISIBLE
         binding.detailsInput.visibility = View.GONE
         binding.saveButton.visibility = View.GONE
     }

@@ -229,19 +229,17 @@ class AppointmentsRepository {
 
     fun updateDetails(id: Int, newDetails: String): LiveData<List<Appointment>> {
         val liveData = MutableLiveData<List<Appointment>>()
-        val userId = FirebaseAuth.getInstance().currentUser?.email.toString()
         val database = FirebaseDatabase.getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("appointments")
 
-        database.orderByChild("userId").equalTo(userId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
                         val appointment = data.getValue(Appointment::class.java)
                         if (appointment != null && appointment.id == id) {
                             val firebaseKey = data.key
                             if (firebaseKey != null) {
-                                val updates = mapOf<String, Any>("details" to newDetails)
+                                val updates = mapOf<String, Any>("details" to newDetails, "status" to "Completed")
                                 database.child(firebaseKey).updateChildren(updates)
                                     .addOnSuccessListener {
                                         appointment.details = newDetails

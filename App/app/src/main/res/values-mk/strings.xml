@@ -77,6 +77,7 @@
     <string name="how_did_the_appointment_go">Како помина терминот?</string>
     <string name="edit">Измени</string>
     <string name="save">Зачувај</string>
+    <string name="complete_appointment">Заврши го терминот</string>
     <string name="enter_appointment_details">Внесете детали за терминот</string>
     <string name="doctor">Доктор</string>
     <string name="patient">Пациент</string>

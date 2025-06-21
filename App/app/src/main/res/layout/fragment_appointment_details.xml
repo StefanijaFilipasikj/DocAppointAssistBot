@@ -154,7 +154,7 @@
             android:id="@+id/editButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/edit"
+            android:text="@string/complete_appointment"
             android:backgroundTint="@color/blue_500"
             android:textColor="@color/white"
             android:padding="12dp"

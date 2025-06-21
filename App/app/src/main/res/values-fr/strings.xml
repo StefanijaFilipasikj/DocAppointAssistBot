@@ -77,6 +77,7 @@
     <string name="how_did_the_appointment_go">Comment s`est passé le rendez-vous ?</string>
     <string name="edit">Modifier</string>
     <string name="save">Enregistrer</string>
+    <string name="complete_appointment">Compléter le rendez-vous</string>
     <string name="enter_appointment_details">Entrez les détails du rendez-vous</string>
     <string name="doctor">Médecin</string>
     <string name="patient">Patient</string>
