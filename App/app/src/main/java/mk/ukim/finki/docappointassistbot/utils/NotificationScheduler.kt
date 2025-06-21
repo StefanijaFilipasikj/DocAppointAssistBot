@@ -11,14 +11,21 @@ import mk.ukim.finki.docappointassistbot.domain.Appointment
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.content.edit
+import java.text.ParseException
 
 object NotificationScheduler {
 
     private const val PREFS_NAME = "appointments"
 
     fun scheduleNotification(context: Context, appointment: Appointment) {
-        val format = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
-        val appointmentTime = format.parse(appointment.startTime) ?: return
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH)
+        val appointmentTime: Date
+        try {
+            appointmentTime = format.parse(appointment.startTime) ?: return
+        } catch (e: ParseException){
+            e.printStackTrace()
+            return;
+        }
 
         // Check if the appointment time is in the future
         if (appointment.status != "Upcoming") {

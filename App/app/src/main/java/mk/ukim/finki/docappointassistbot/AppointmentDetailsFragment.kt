@@ -1,6 +1,7 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import mk.ukim.finki.docappointassistbot.databinding.FragmentAppointmentDetailsBinding
 import mk.ukim.finki.docappointassistbot.domain.Appointment
+import mk.ukim.finki.docappointassistbot.domain.PatientReport
+import mk.ukim.finki.docappointassistbot.retrofit.ChatbotRetrofitClient
 import mk.ukim.finki.docappointassistbot.ui.viewModels.AppointmentsViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AppointmentDetailsFragment : Fragment() {
 
@@ -47,6 +53,8 @@ class AppointmentDetailsFragment : Fragment() {
             }
 
             appointment = appointmentFound
+            if (appointment.status.trim() != "Upcoming")
+                binding.editButton.visibility = View.GONE
 
             val currentUser = FirebaseAuth.getInstance().currentUser
             if (currentUser != null) {
@@ -77,6 +85,26 @@ class AppointmentDetailsFragment : Fragment() {
                     viewModel.updateAppointmentDetails(appointment.id, newDetails)
                     showTextMode()
                 }
+
+                val patientReport = PatientReport(
+                    text = binding.detailsInput.text.toString(),
+                    patient_id = appointment.userId,
+                    date = appointment.startTime
+                )
+
+                ChatbotRetrofitClient.api.embedReport(patientReport).enqueue(object : Callback<Boolean> {
+                    override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                        if (response.isSuccessful && response.body() == true) {
+                            Log.d("RETROFIT", "Document embedded!")
+                        } else {
+                            Log.e("RETROFIT", "Error: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                        Log.e("RETROFIT", "Failure: ${t.message}")
+                    }
+                })
             }
         }
     }
@@ -85,11 +113,12 @@ class AppointmentDetailsFragment : Fragment() {
         val details = appointment.details?.trim()
         if (details.isNullOrEmpty()) {
             binding.detailsText.text = getString(R.string.enter_appointment_details)
+            binding.editButton.visibility = View.VISIBLE
         } else {
             binding.detailsText.text = details
+            binding.editButton.visibility = View.GONE
         }
         binding.detailsText.visibility = View.VISIBLE
-        binding.editButton.visibility = View.VISIBLE
         binding.detailsInput.visibility = View.GONE
         binding.saveButton.visibility = View.GONE
     }

@@ -83,7 +83,10 @@ class MainActivity : AppCompatActivity() {
             replaceFragment(AdminRequestsFragment())
         } else if (isDoctor){
             binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
-            replaceFragment(DoctorsFragment())
+            binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.title = getString(R.string.my_patients)
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_user_24)
+            replaceFragment(PatientsFragment())
         }
         else {
             replaceFragment(HomeFragment())
@@ -91,10 +94,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             isOnNotificationsScreen = false
+            val user = FirebaseAuth.getInstance().currentUser
             when (it.itemId) {
                 R.id.home -> replaceFragment(HomeFragment())
-                R.id.doctors -> replaceFragment(DoctorsFragment())
-                R.id.chatbot -> replaceFragment(ChatbotFragment())
+                R.id.doctors -> {
+                    if (isDoctor)
+                        replaceFragment(PatientsFragment())
+                    else replaceFragment(DoctorsFragment())
+                }
+                R.id.chatbot -> replaceFragment(ChatbotFragment.newInstance(user?.email, "patient"))
                 R.id.appointments -> replaceFragment(AppointmentsFragment())
                 R.id.settings -> replaceFragment(SettingsFragment())
                 R.id.requests -> replaceFragment(AdminRequestsFragment())

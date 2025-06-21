@@ -76,6 +76,7 @@
     <string name="how_did_the_appointment_go">How did the appointment go?</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="complete_appointment">Complete the appointment</string>
     <string name="enter_appointment_details">Enter appointment details</string>
     <string name="doctor">Doctor</string>
     <string name="patient">Patient</string>
@@ -115,6 +116,8 @@
     <string name="deny">Deny</string>
     <string name="doctor_requests_list">Doctor Requests List</string>
     <string name="specialty_default">Specialty</string>
+    <string name="my_patients">My Patients</string>
+    <string name="write_message_here">Write message here</string>
 
     <string-array name="languages">
         <item>EN</item>

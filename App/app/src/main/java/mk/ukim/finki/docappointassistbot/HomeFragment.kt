@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
         // Chatbot
         binding.textHello.text = "${getString(R.string.hello)} ${user?.displayName ?: ""}"
         binding.cardChatWithChatbot.setOnClickListener {
-            replaceFragment(ChatbotFragment())
+            replaceFragment(ChatbotFragment.newInstance(user?.email, "patient"))
         }
 
         // Upcoming Appointments
