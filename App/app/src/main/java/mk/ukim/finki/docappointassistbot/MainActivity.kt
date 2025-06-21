@@ -272,4 +272,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun setSelectedNavItem(itemId: Int) {
+        binding.bottomNavigationView.selectedItemId = itemId
+    }
 }

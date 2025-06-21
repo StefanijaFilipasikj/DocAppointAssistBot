@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
         // Chatbot
         binding.textHello.text = "${getString(R.string.hello)} ${user?.displayName ?: ""}"
         binding.cardChatWithChatbot.setOnClickListener {
+            (activity as? MainActivity)?.setSelectedNavItem(R.id.chatbot)
             replaceFragment(ChatbotFragment.newInstance(user?.email, "patient"))
         }
 
@@ -83,7 +84,8 @@ class HomeFragment : Fragment() {
         // Browse by specialty
         fetchAndDisplaySpecialties()
         binding.tvSeeAllSpecialties.setOnClickListener{
-            replaceFragment(DoctorsFragment());
+            replaceFragment(DoctorsFragment())
+            (activity as? MainActivity)?.setSelectedNavItem(R.id.doctors)
         }
 
         // Browse nearby doctors
@@ -92,6 +94,8 @@ class HomeFragment : Fragment() {
         }
 
         doctorsNearbyAdapter = DoctorAdapter(emptyList()) { selectedDoctor ->
+            (activity as? MainActivity)?.setSelectedNavItem(R.id.doctors)
+
             val fragment = DoctorDetailsFragment.newInstance(selectedDoctor.id)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, fragment)
@@ -162,6 +166,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun onClickAppointment(appointment: Appointment) {
+        (activity as? MainActivity)?.setSelectedNavItem(R.id.appointments)
+
         val bundle = bundleOf("appointmentId" to appointment.id)
         val fragment = AppointmentDetailsFragment().apply {
             arguments = bundle
