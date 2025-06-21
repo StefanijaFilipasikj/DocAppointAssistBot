@@ -118,6 +118,7 @@
     <string name="specialty_default">Spécialité</string>
     <string name="my_patients">Mes patients</string>
     <string name="write_message_here">Écrivez ici</string>
+    <string name="please_log_in_to_continue">Veuillez vous connecter pour continuer</string>
 
     <string-array name="languages">
         <item>EN</item>

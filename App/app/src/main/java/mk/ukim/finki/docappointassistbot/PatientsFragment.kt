@@ -90,6 +90,8 @@ class PatientsFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
+                if (!isAdded) return
+
                 Toast.makeText(requireContext(), "error: $error", Toast.LENGTH_SHORT).show()
             }
         })

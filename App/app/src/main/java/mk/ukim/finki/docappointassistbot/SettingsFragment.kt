@@ -43,6 +43,9 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null)
+            binding.signOutGroup.visibility = View.GONE
         return binding.root
     }
 

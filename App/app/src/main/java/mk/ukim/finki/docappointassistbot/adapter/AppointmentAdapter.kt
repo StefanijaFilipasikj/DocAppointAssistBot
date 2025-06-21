@@ -135,6 +135,7 @@ class AppointmentAdapter(
                 binding.cardView.setBackgroundResource(R.drawable.bg_white_radius10)
             }
             currentItem.status.equals("Completed", ignoreCase = true) -> {
+                holder.itemView.alpha = 1.0f
                 binding.cardView.setBackgroundResource(R.drawable.bg_blue200_radius10)
             }
             else -> { // Canceled

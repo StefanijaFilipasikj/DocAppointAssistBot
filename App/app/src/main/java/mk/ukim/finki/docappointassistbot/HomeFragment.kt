@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,6 +39,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null){
+            binding.cardChatWithChatbot.visibility = View.GONE
+            binding.tvUpcomingTitle.visibility = View.GONE
+            binding.recyclerAppointments.visibility = View.GONE
+            binding.specialistHeader.visibility = View.GONE
+            binding.layoutSpecialists.visibility = View.GONE
+            binding.recyclerDoctorsNearby.visibility = View.GONE
+            binding.nearbyHeader.visibility = View.GONE
+            binding.loginLayout.visibility = View.VISIBLE
+        }
+        else
+            binding.loginLayout.visibility = View.GONE
+
         return binding.root
     }
 
@@ -92,6 +107,11 @@ class HomeFragment : Fragment() {
         }
         binding.recyclerDoctorsNearby.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerDoctorsNearby.adapter = doctorsNearbyAdapter
+
+        binding.btnLoginNow.setOnClickListener {
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {

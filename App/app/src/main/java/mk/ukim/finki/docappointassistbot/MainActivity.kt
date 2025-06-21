@@ -74,6 +74,13 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null){
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.isVisible = false
+            binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
+            binding.bottomNavigationView.menu.findItem(R.id.appointments)?.isVisible = false
+        }
+
     }
 
     private fun setupBottomNavigation() {
@@ -117,11 +124,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (isAdmin || isDoctor) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (isAdmin || isDoctor || user == null) {
             menu.findItem(R.id.notifications)?.isVisible = false
         }
 
-        val user = FirebaseAuth.getInstance().currentUser
         val loginItem = menu.findItem(R.id.login)
         loginItem.setIcon(R.drawable.ic_baseline_user_24)
 
