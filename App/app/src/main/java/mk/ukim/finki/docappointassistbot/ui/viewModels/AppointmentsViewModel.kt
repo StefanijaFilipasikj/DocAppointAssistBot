@@ -21,14 +21,15 @@ class AppointmentsViewModel : ViewModel() {
 
     fun fetchAppointments() {
         repository.getAppointments().observeForever {
-            _appointments.value = it
+            _appointments.value = sortAppointments(it)
         }
     }
 
     fun fetchAppointmentsForDoctor(doctorId: String) {
         repository.getAppointmentsForDoctor(doctorId).observeForever { fetchedAppointments ->
-            allDoctorAppointments = fetchedAppointments
-            _appointments.value = fetchedAppointments
+            val sorted = sortAppointments(fetchedAppointments)
+            allDoctorAppointments = sorted
+            _appointments.value = sorted
         }
     }
 
@@ -50,7 +51,14 @@ class AppointmentsViewModel : ViewModel() {
 
     fun updateAppointmentDetails(id: Int, newDetails: String) {
         repository.updateDetails(id, newDetails).observeForever { updatedList ->
-            _appointments.value = updatedList
+            _appointments.value = sortAppointments(updatedList)
         }
+    }
+
+    private fun sortAppointments(appointments: List<Appointment>): List<Appointment>{
+        return appointments.sortedWith(
+            compareBy<Appointment> {it.status}
+                .thenBy { it.startTime }
+        )
     }
 }

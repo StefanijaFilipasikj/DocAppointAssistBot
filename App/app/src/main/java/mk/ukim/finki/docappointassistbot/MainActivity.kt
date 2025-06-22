@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     private var lastNonNotificationFragment: Fragment? = null
     private var isOnNotificationsScreen = false
+    private var isNavItemSelectedProgrammatically = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -81,6 +82,18 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigationView.menu.findItem(R.id.appointments)?.isVisible = false
         }
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
+            when (currentFragment) {
+                is HomeFragment -> setSelectedNavItem(R.id.home)
+                is DoctorsFragment, is PatientsFragment -> setSelectedNavItem(R.id.doctors)
+                is ChatbotFragment -> setSelectedNavItem(R.id.chatbot)
+                is AppointmentsFragment -> setSelectedNavItem(R.id.appointments)
+                is SettingsFragment -> setSelectedNavItem(R.id.settings)
+            }
+
+            invalidateOptionsMenu()
+        }
     }
 
     private fun setupBottomNavigation() {
@@ -100,6 +113,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
+            if (isNavItemSelectedProgrammatically) {
+                isNavItemSelectedProgrammatically = false
+                return@setOnItemSelectedListener true
+            }
+
             isOnNotificationsScreen = false
             val user = FirebaseAuth.getInstance().currentUser
             when (it.itemId) {
@@ -186,6 +204,9 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
+
+        if(fragment !is HomeFragment)
+            fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
 
@@ -273,6 +294,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSelectedNavItem(itemId: Int) {
+        isNavItemSelectedProgrammatically = true
         binding.bottomNavigationView.selectedItemId = itemId
     }
 }
