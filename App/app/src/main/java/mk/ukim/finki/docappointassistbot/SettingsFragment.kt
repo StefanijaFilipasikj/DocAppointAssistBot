@@ -70,6 +70,7 @@ class SettingsFragment : Fragment() {
                 }
                 startActivity(intent)
             }
+            setLastFragment()
         }
 
         // Location
@@ -86,6 +87,7 @@ class SettingsFragment : Fragment() {
                 }
                 startActivity(intent)
             }
+            setLastFragment()
         }
 
         // Dark mode
@@ -95,6 +97,7 @@ class SettingsFragment : Fragment() {
             val newMode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(newMode)
             sharedPref.edit() { putInt("theme_mode", newMode) }
+            setLastFragment()
         }
 
         // Language
@@ -203,10 +206,18 @@ class SettingsFragment : Fragment() {
         val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
         sharedPref.edit() { putString("language", language) }
 
+        setLastFragment()
         binding.root.postDelayed({
             activity?.recreate()
         }, 200)
 
     }
 
+    // TODO: please find better solution in future
+    private fun setLastFragment(){
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() {
+            putString("last_fragment", "settings")
+        }
+    }
 }
