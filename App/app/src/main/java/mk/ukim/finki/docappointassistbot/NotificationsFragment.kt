@@ -1,9 +1,11 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +30,9 @@ class NotificationsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "notifications") }
+
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
 
         binding.upcomingRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -43,7 +48,6 @@ class NotificationsFragment : Fragment() {
         binding.upcomingRecyclerView.adapter = upcomingAdapter
         binding.recentRecyclerView.adapter = recentAdapter
 
-        val sharedPref = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE)
         val notificationsEnabled = sharedPref.getBoolean("notifications_enabled", false)
 
         if (!notificationsEnabled) {

@@ -1,6 +1,7 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -43,6 +44,10 @@ class EnableLocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "enableLocation") }
+
         binding.btnTurnOnLocation.setOnClickListener {
             requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             val intent = Intent(context, MainActivity::class.java)

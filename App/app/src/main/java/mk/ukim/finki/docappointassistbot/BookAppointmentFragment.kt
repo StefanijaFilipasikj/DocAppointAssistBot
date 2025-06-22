@@ -82,7 +82,7 @@ class BookAppointmentFragment : Fragment() {
     }
 
     private fun fetchWorkHours(dayOfWeek: String) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss a", Locale.ENGLISH)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
 
         firebaseRef.child("doctors").child(doctorId).get().addOnSuccessListener { snapshot ->
             val doctor = snapshot.getValue(Doctor::class.java)
@@ -115,8 +115,8 @@ class BookAppointmentFragment : Fragment() {
                 .mapNotNull { it.getValue(Appointment::class.java) }
                 .filter { it.doctorId == doctorId && it.startTime.startsWith(formattedDate) }
                 .filter { it.status != "Canceled" }
-                .map { SimpleDateFormat("HH:mm a", Locale.ENGLISH)
-                    .format(SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH).parse(it.startTime)!!) }
+                .map { SimpleDateFormat("HH:mm", Locale.ENGLISH)
+                    .format(SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH).parse(it.startTime)!!) }
             generateTimeSlots()
         }
     }
@@ -131,7 +131,7 @@ class BookAppointmentFragment : Fragment() {
             calendar.timeInMillis = startTime
 
             while (calendar.timeInMillis < endTime) {
-                val slotTime = SimpleDateFormat("HH:mm a", Locale.ENGLISH).format(calendar.time)
+                val slotTime = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(calendar.time)
                 slots.add(slotTime)
                 calendar.add(Calendar.MINUTE, 30)
             }
@@ -141,7 +141,7 @@ class BookAppointmentFragment : Fragment() {
     }
 
     private fun bookAppointment() {
-        val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH)
+        val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
         val time = timeFormat.parse("$selectedDate $selectedTime") ?: Date()
 
         val calendar = Calendar.getInstance()

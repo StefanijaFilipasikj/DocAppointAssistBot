@@ -57,7 +57,7 @@ class AppointmentsViewModel : ViewModel() {
 
     private fun sortAppointments(appointments: List<Appointment>): List<Appointment>{
         return appointments.sortedWith(
-            compareBy<Appointment> {it.status}
+            compareByDescending<Appointment> {it.status}
                 .thenBy { it.startTime }
         )
     }

@@ -80,6 +80,9 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigationView.menu.findItem(R.id.doctors)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.appointments)?.isVisible = false
+
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
 
         supportFragmentManager.addOnBackStackChangedListener {
@@ -100,21 +103,30 @@ class MainActivity : AppCompatActivity() {
         // TODO: please find better solution in future
         val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val lastFragment = sharedPref.getString("last_fragment", "")
-        if(lastFragment == "settings"){
-            replaceFragment(SettingsFragment())
-        }else{
-            if (isAdmin) {
-                binding.bottomNavigationView.menu.clear()
-                binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
+
+        if (isAdmin) {
+            binding.bottomNavigationView.menu.clear()
+            binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
                 replaceFragment(AdminRequestsFragment())
-            } else if (isDoctor){
-                binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
-                binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
-                binding.bottomNavigationView.menu.findItem(R.id.doctors)?.title = getString(R.string.my_patients)
-                binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_patients_24)
+            }
+        } else if (isDoctor){
+            binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
+            binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.title = getString(R.string.my_patients)
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_patients_24)
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
                 replaceFragment(PatientsFragment())
             }
-            else {
+        }
+        else {
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
                 replaceFragment(HomeFragment())
             }
         }

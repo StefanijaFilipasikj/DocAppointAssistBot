@@ -56,7 +56,6 @@ class DoctorRequestActivity : AppCompatActivity() {
         uploadCvButton.setOnClickListener { selectPdfFile() }
         submitButton.setOnClickListener {
             saveWorkHours()
-            handleSubmit()
         }
 
         pdfPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -172,7 +171,8 @@ class DoctorRequestActivity : AppCompatActivity() {
             status = "Submitted"
         )
 
-        FirebaseDatabase.getInstance()
+        FirebaseDatabase
+            .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctorRequests")
             .push()
             .setValue(request)
@@ -213,7 +213,8 @@ class DoctorRequestActivity : AppCompatActivity() {
 
     private fun groupWorkHours(): List<WorkHours> {
         val dayWorkHours = workHoursAdapter.getSelectedWorkHours()
-            val dateFormatInput = SimpleDateFormat("yyyy-MM-dd HH:mm:ss a", Locale.ENGLISH)
+        val dateFormatInput = SimpleDateFormat("HH:mm", Locale.ENGLISH)
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH)
         val grouped = dayWorkHours.groupBy { it.startTime + "_" + it.endTime }
         val now = Date()
         val calendar = java.util.Calendar.getInstance()
@@ -227,7 +228,9 @@ class DoctorRequestActivity : AppCompatActivity() {
             calendar.set(java.util.Calendar.MINUTE, cal2.get(java.util.Calendar.MINUTE))
             calendar.set(java.util.Calendar.SECOND, 0)
             calendar.set(java.util.Calendar.MILLISECOND, 0)
-            return calendar.time
+
+            val formattedString = outputFormat.format(calendar.time)
+            return outputFormat.parse(formattedString) ?: Date()
         }
 
         return grouped.map { (timeRange, days) ->

@@ -2,6 +2,7 @@ package mk.ukim.finki.docappointassistbot
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import mk.ukim.finki.docappointassistbot.adapter.ChatRecyclerAdapter
@@ -82,6 +84,9 @@ class ChatbotFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "chatbot") }
 
         viewModel = ViewModelProvider(this).get(MessagesViewModel::class.java)
         chatAdapter = ChatRecyclerAdapter(emptyList())

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.edit
 import com.bumptech.glide.Glide
 import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorDetailsBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
@@ -54,6 +55,10 @@ class DoctorDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "doctorDetails") }
+
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors")
