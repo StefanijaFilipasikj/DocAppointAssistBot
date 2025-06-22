@@ -5,17 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import mk.ukim.finki.docappointassistbot.R
-import mk.ukim.finki.docappointassistbot.databinding.ItemUserBinding
+import mk.ukim.finki.docappointassistbot.databinding.ItemPatientBinding
 import mk.ukim.finki.docappointassistbot.domain.User
 
 class UserAdapter(private var users : List<User>,
                   private val onUserClick: (User) -> Unit
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding : ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding : ItemPatientBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserAdapter.ViewHolder {
-        return ViewHolder(ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemPatientBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int {

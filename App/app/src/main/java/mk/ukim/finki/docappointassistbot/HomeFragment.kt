@@ -161,10 +161,6 @@ class HomeFragment : Fragment() {
             })
     }
 
-    private fun onCancelAppointment(appointment: Appointment) {
-        viewModel.cancelAppointment(requireContext(), appointment)
-    }
-
     private fun onClickAppointment(appointment: Appointment) {
         (activity as? MainActivity)?.setSelectedNavItem(R.id.appointments)
 

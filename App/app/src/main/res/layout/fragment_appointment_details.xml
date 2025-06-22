@@ -148,7 +148,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="vertical"
-        android:elevation="4dp">
+        android:elevation="2dp">
 
         <Button
             android:id="@+id/editButton"

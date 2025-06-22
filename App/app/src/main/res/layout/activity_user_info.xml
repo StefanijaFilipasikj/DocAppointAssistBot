@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_profile"
+        android:textColor="@color/gray_800"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"

@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.doctors)?.title = getString(R.string.my_patients)
-            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_user_24)
+            binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_patients_24)
             replaceFragment(PatientsFragment())
         }
         else {
@@ -131,13 +131,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         val loginItem = menu.findItem(R.id.login)
-        loginItem.setIcon(R.drawable.ic_baseline_user_24)
+        loginItem.setIcon(R.drawable.ic_baseline_user_24_white)
 
         user?.let {
             Glide.with(this)
                 .asBitmap()
                 .load(it.photoUrl)
-                .placeholder(R.drawable.ic_baseline_user_24)
+                .placeholder(R.drawable.ic_baseline_user_24_white)
                 .circleCrop()
                 .into(object : CustomTarget<Bitmap>(64, 64) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {

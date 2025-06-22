@@ -64,7 +64,7 @@ class PatientsFragment : Fragment() {
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("users")
-        users.clear();
+        users.clear()
 
         firebaseRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot){
