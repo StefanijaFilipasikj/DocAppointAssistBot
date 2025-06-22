@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import mk.ukim.finki.docappointassistbot.databinding.ChatMessageRecyclerRowBinding
+import mk.ukim.finki.docappointassistbot.databinding.ItemChatMessageBinding
 import mk.ukim.finki.docappointassistbot.domain.MessagesModel
 import mk.ukim.finki.docappointassistbot.domain.enums.ChatRole
 
@@ -12,12 +12,12 @@ import mk.ukim.finki.docappointassistbot.domain.enums.ChatRole
 class ChatRecyclerAdapter(private var messages: List<MessagesModel>) :
     RecyclerView.Adapter<ChatRecyclerAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ChatMessageRecyclerRowBinding) :
+    class ViewHolder(val binding: ItemChatMessageBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ChatMessageRecyclerRowBinding.inflate(
+            ItemChatMessageBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -34,8 +34,8 @@ class ChatRecyclerAdapter(private var messages: List<MessagesModel>) :
                     leftChatLayout.visibility = View.VISIBLE
                     leftChatTextView.text = currentItem.content
                 } else {
-                    leftChatLayout.visibility = View.GONE;
-                    rightChatLayout.visibility = View.VISIBLE;
+                    leftChatLayout.visibility = View.GONE
+                    rightChatLayout.visibility = View.VISIBLE
                     rightChatTextView.text = currentItem.content
                 }
             }

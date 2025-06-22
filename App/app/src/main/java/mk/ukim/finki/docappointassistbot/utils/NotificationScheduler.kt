@@ -24,7 +24,7 @@ object NotificationScheduler {
             appointmentTime = format.parse(appointment.startTime) ?: return
         } catch (e: ParseException){
             e.printStackTrace()
-            return;
+            return
         }
 
         // Check if the appointment time is in the future

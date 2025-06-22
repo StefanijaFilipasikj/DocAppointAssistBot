@@ -29,17 +29,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/please_log_in_to_continue"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/gray_900"
+                android:textColor="@color/gray_800"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="48dp" />
 
             <Button
                 android:id="@+id/btnLoginNow"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
                 app:layout_constraintTop_toBottomOf="@id/textPleaseLogin"
