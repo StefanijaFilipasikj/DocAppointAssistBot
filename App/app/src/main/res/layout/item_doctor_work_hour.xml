@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/dayLabel"
+        android:layout_width="0dp"
+        android:layout_weight="1.3"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray_800"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/timeFromSpinner"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="36dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
+
+    <Spinner
+        android:id="@+id/timeToSpinner"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
+</LinearLayout>

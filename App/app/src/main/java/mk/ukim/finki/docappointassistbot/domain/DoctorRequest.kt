@@ -11,6 +11,6 @@ data class DoctorRequest(
     val experience: Double = 0.0,
     val hospitalId: Int? = null,
     val cvUrl: String = "",
-    val workHourIds: List<Int>? = null,
+    val workHourIds: List<String>? = null,
     val status: String = "Submitted"
 )

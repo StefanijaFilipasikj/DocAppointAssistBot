@@ -100,7 +100,7 @@ class DoctorDetailsFragment : Fragment() {
         }
     }
 
-    private fun fetchWorkHours(workHourIds: List<Int>, callback: (List<WorkHours>) -> Unit) {
+    private fun fetchWorkHours(workHourIds: List<String>, callback: (List<WorkHours>) -> Unit) {
         val workHours = mutableListOf<WorkHours>()
         val workHoursRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
@@ -108,7 +108,7 @@ class DoctorDetailsFragment : Fragment() {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         workHourIds.forEach { workHourId ->
-            workHoursRef.child(workHourId.toString()).get().addOnSuccessListener { snapshot ->
+            workHoursRef.child(workHourId).get().addOnSuccessListener { snapshot ->
                 val daysOfWeek = snapshot.child("daysOfWeek").getValue(String::class.java)
                 val startTime = snapshot.child("startTime").getValue(String::class.java)
                 val endTime = snapshot.child("endTime").getValue(String::class.java)

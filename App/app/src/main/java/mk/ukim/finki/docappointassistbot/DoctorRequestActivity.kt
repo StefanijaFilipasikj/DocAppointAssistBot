@@ -9,10 +9,17 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import mk.ukim.finki.docappointassistbot.adapter.WorkHoursAdapter
 import mk.ukim.finki.docappointassistbot.domain.DoctorRequest
 import mk.ukim.finki.docappointassistbot.domain.User
+import mk.ukim.finki.docappointassistbot.domain.WorkHours
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DoctorRequestActivity : AppCompatActivity() {
 
@@ -26,14 +33,15 @@ class DoctorRequestActivity : AppCompatActivity() {
     private lateinit var specialtySpinner: Spinner
     private lateinit var uploadCvButton: Button
     private lateinit var cvFileNameTextView: TextView
-    private lateinit var workHoursContainer: LinearLayout
+    private lateinit var workHoursRecyclerView: RecyclerView
     private lateinit var submitButton: Button
 
     private var selectedCvUri: Uri? = null
-    private val selectedWorkHourIds = mutableSetOf<Int>()
+    private val selectedWorkHourIds = mutableSetOf<String>()
     private var hospitals = mutableListOf<Pair<Int, String>>()
     private var specialties = mutableListOf<String>()
     private lateinit var pdfPickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var workHoursAdapter: WorkHoursAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +54,10 @@ class DoctorRequestActivity : AppCompatActivity() {
         loadCurrentUserData()
 
         uploadCvButton.setOnClickListener { selectPdfFile() }
-        submitButton.setOnClickListener { handleSubmit() }
+        submitButton.setOnClickListener {
+            saveWorkHours()
+            handleSubmit()
+        }
 
         pdfPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -74,7 +85,7 @@ class DoctorRequestActivity : AppCompatActivity() {
         hospitalSpinner = findViewById(R.id.hospitalSpinner)
         uploadCvButton = findViewById(R.id.uploadCvButton)
         cvFileNameTextView = findViewById(R.id.cvFileNameTextView)
-        workHoursContainer = findViewById(R.id.workHoursCheckboxContainer)
+        workHoursRecyclerView = findViewById(R.id.workHoursRecyclerView)
         submitButton = findViewById(R.id.submitRequestButton)
     }
 
@@ -118,30 +129,6 @@ class DoctorRequestActivity : AppCompatActivity() {
                 specialtySpinner.adapter = adapter
             }
             .addOnFailureListener { toast("Failed loading specialties") }
-    }
-
-    private fun loadWorkHours() {
-        FirebaseDatabase.getInstance()
-            .getReference("workHours")
-            .get()
-            .addOnSuccessListener { snap ->
-                workHoursContainer.removeAllViews()
-                for (child in snap.children) {
-                    val id = child.key?.toIntOrNull() ?: continue
-                    val days = child.child("daysOfWeek").getValue(String::class.java) ?: ""
-                    val startTime = child.child("startTime").getValue(String::class.java) ?: ""
-                    val endTime = child.child("endTime").getValue(String::class.java) ?: ""
-                    val cb = CheckBox(this).apply {
-                        text = "$days: $startTime – $endTime"
-                        setOnCheckedChangeListener { _, checked ->
-                            if (checked) selectedWorkHourIds.add(id)
-                            else selectedWorkHourIds.remove(id)
-                        }
-                    }
-                    workHoursContainer.addView(cb)
-                }
-            }
-            .addOnFailureListener { toast("Failed loading work hours") }
     }
 
     private fun loadCurrentUserData() {
@@ -212,4 +199,80 @@ class DoctorRequestActivity : AppCompatActivity() {
     }
 
     private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+    private fun loadWorkHours() {
+        val recyclerView = findViewById<RecyclerView>(R.id.workHoursRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        val hoursList = (0..23).map { String.format("%02d:00", it) }
+
+        workHoursAdapter = WorkHoursAdapter(days, hoursList)
+        recyclerView.adapter = workHoursAdapter
+    }
+
+    private fun groupWorkHours(): List<WorkHours> {
+        val dayWorkHours = workHoursAdapter.getSelectedWorkHours()
+            val dateFormatInput = SimpleDateFormat("yyyy-MM-dd HH:mm:ss a", Locale.ENGLISH)
+        val grouped = dayWorkHours.groupBy { it.startTime + "_" + it.endTime }
+        val now = Date()
+        val calendar = java.util.Calendar.getInstance()
+
+        fun parseTimeToDate(timeStr: String): Date {
+            val parsedTime = dateFormatInput.parse(timeStr) ?: Date()
+            calendar.time = now
+            val cal2 = java.util.Calendar.getInstance()
+            cal2.time = parsedTime
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, cal2.get(java.util.Calendar.HOUR_OF_DAY))
+            calendar.set(java.util.Calendar.MINUTE, cal2.get(java.util.Calendar.MINUTE))
+            calendar.set(java.util.Calendar.SECOND, 0)
+            calendar.set(java.util.Calendar.MILLISECOND, 0)
+            return calendar.time
+        }
+
+        return grouped.map { (timeRange, days) ->
+            val (startStr, endStr) = timeRange.split("_")
+
+            val startDate = parseTimeToDate(startStr)
+            val endDate = parseTimeToDate(endStr)
+
+            val daysOfWeekStr = days.joinToString(", ") { it.day.take(3) }
+
+            WorkHours(
+                daysOfWeek = daysOfWeekStr,
+                startTime = startDate,
+                endTime = endDate
+            )
+        }
+    }
+
+    private fun saveWorkHours() {
+        val groupedWorkHours = groupWorkHours()
+        val database = FirebaseDatabase
+            .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("workHours")
+
+        selectedWorkHourIds.clear()
+        var savedCount = 0
+        if (groupedWorkHours.isEmpty()) {
+            handleSubmit()
+            return
+        }
+        groupedWorkHours.forEach { wh ->
+            val ref = database.push()
+            ref.setValue(wh)
+                .addOnSuccessListener {
+                    ref.key?.let { key ->
+                        selectedWorkHourIds.add(key)
+                    }
+                    savedCount++
+                    if (savedCount == groupedWorkHours.size) {
+                        handleSubmit()
+                    }
+                }
+                .addOnFailureListener {
+                    toast("Failed to save work hours.")
+                }
+        }
+    }
 }

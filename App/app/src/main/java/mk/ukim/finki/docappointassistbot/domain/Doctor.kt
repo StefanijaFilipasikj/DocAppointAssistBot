@@ -12,7 +12,7 @@ data class Doctor(
     val experience: Double = 0.0,
     val reviews: Int = 0,
     val hospitalId: Int? = null,
-    val workHourIds: List<Int>? = null,
+    val workHourIds: List<String>? = null,
     var hospital: Hospital? = null,
     var workHours: List<WorkHours>? = null
 )

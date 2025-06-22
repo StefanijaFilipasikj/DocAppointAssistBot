@@ -90,7 +90,7 @@ class BookAppointmentFragment : Fragment() {
 
             firebaseRef.child("workHours").get().addOnSuccessListener { workHoursSnapshot ->
                 workHours = workHourIds.mapNotNull { id ->
-                    val workHourMap = workHoursSnapshot.child(id.toString()).value as? Map<*, *>
+                    val workHourMap = workHoursSnapshot.child(id).value as? Map<*, *>
                     workHourMap?.let {
                         WorkHours(
                             daysOfWeek = it["daysOfWeek"] as String,
