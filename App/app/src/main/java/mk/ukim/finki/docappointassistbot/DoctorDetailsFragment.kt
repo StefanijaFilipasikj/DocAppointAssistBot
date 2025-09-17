@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.edit
 import com.bumptech.glide.Glide
 import mk.ukim.finki.docappointassistbot.databinding.FragmentDoctorDetailsBinding
 import mk.ukim.finki.docappointassistbot.domain.Doctor
@@ -54,6 +55,10 @@ class DoctorDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "doctorDetails") }
+
         firebaseRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
             .getReference("doctors")
@@ -100,7 +105,7 @@ class DoctorDetailsFragment : Fragment() {
         }
     }
 
-    private fun fetchWorkHours(workHourIds: List<Int>, callback: (List<WorkHours>) -> Unit) {
+    private fun fetchWorkHours(workHourIds: List<String>, callback: (List<WorkHours>) -> Unit) {
         val workHours = mutableListOf<WorkHours>()
         val workHoursRef = FirebaseDatabase
             .getInstance("https://docappointassistbot-default-rtdb.europe-west1.firebasedatabase.app")
@@ -108,7 +113,7 @@ class DoctorDetailsFragment : Fragment() {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         workHourIds.forEach { workHourId ->
-            workHoursRef.child(workHourId.toString()).get().addOnSuccessListener { snapshot ->
+            workHoursRef.child(workHourId).get().addOnSuccessListener { snapshot ->
                 val daysOfWeek = snapshot.child("daysOfWeek").getValue(String::class.java)
                 val startTime = snapshot.child("startTime").getValue(String::class.java)
                 val endTime = snapshot.child("endTime").getValue(String::class.java)

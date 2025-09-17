@@ -116,7 +116,7 @@ class AppointmentsRepository {
                     appointmentsList.add(appointment)
                 }
 
-                val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+                val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                 appointmentsList.sortBy {
                     try {
                         formatter.parse(it.startTime)
@@ -140,7 +140,7 @@ class AppointmentsRepository {
     }
 
     fun updateAppointmentStatus(appointment: Appointment, firebaseKey: String) {
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         try {
             val appointmentDate = formatter.parse(appointment.startTime)
             val now = Date()

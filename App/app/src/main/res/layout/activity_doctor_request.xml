@@ -173,20 +173,30 @@
             android:layout_marginBottom="16dp"/>
 
         <!-- Work Hours -->
-        <TextView
-            android:id="@+id/workHoursLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/select_available_work_hours"
-            android:textColor="@color/gray_800"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-        <LinearLayout
-            android:id="@+id/workHoursCheckboxContainer"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginBottom="16dp" />
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/workHoursLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_available_work_hours"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray_800"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/workHoursRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical" />
+        </LinearLayout>
 
         <!-- Submit Button -->
         <Button

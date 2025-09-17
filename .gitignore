@@ -40,3 +40,4 @@ google-services.json
 chroma_medembed_db*
 .env
 __pycache__
+data

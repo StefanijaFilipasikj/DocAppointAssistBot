@@ -208,7 +208,7 @@
                         android:id="@+id/tvSignOut"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/switch_account"
+                        android:text="@string/sign_out"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:paddingTop="20dp"

@@ -7,3 +7,5 @@ langchain-community
 sentence-transformers
 chromadb
 openai
+neo4j
+ollama

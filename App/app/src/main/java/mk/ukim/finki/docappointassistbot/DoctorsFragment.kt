@@ -1,5 +1,6 @@
 package mk.ukim.finki.docappointassistbot
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.*
 import mk.ukim.finki.docappointassistbot.adapter.DoctorAdapter
@@ -43,6 +45,9 @@ class DoctorsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("doctors", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "chatbot") }
 
         val specialty = arguments?.getString("specialty")
         if (specialty != null) {

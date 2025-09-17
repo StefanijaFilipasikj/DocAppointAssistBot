@@ -18,7 +18,7 @@ object NotificationScheduler {
     private const val PREFS_NAME = "appointments"
 
     fun scheduleNotification(context: Context, appointment: Appointment) {
-        val format = SimpleDateFormat("yyyy-MM-dd HH:mm a", Locale.ENGLISH)
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
         val appointmentTime: Date
         try {
             appointmentTime = format.parse(appointment.startTime) ?: return

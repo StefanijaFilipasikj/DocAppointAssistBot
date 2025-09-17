@@ -1,6 +1,7 @@
 package mk.ukim.finki.docappointassistbot
 
 import android.Manifest
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -45,6 +46,10 @@ class EnableNotificationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val sharedPref = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPref.edit() { putString("last_fragment", "enableNotifications") }
+
         viewPager = requireActivity().findViewById(R.id.viewPager)
 
         binding.btnTurnOnNotifications.setOnClickListener {

@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     private var lastNonNotificationFragment: Fragment? = null
     private var isOnNotificationsScreen = false
+    private var isNavItemSelectedProgrammatically = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -79,27 +80,63 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigationView.menu.findItem(R.id.doctors)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.appointments)?.isVisible = false
+
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
+            when (currentFragment) {
+                is HomeFragment -> setSelectedNavItem(R.id.home)
+                is DoctorsFragment, is PatientsFragment -> setSelectedNavItem(R.id.doctors)
+                is ChatbotFragment -> setSelectedNavItem(R.id.chatbot)
+                is AppointmentsFragment -> setSelectedNavItem(R.id.appointments)
+                is SettingsFragment -> setSelectedNavItem(R.id.settings)
+            }
+
+            invalidateOptionsMenu()
+        }
     }
 
     private fun setupBottomNavigation() {
+        // TODO: please find better solution in future
+        val sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val lastFragment = sharedPref.getString("last_fragment", "")
+
         if (isAdmin) {
             binding.bottomNavigationView.menu.clear()
             binding.bottomNavigationView.inflateMenu(R.menu.bottom_nav_admin)
-            replaceFragment(AdminRequestsFragment())
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
+                replaceFragment(AdminRequestsFragment())
+            }
         } else if (isDoctor){
             binding.bottomNavigationView.menu.findItem(R.id.home)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.chatbot)?.isVisible = false
             binding.bottomNavigationView.menu.findItem(R.id.doctors)?.title = getString(R.string.my_patients)
             binding.bottomNavigationView.menu.findItem(R.id.doctors)?.icon = getDrawable(R.drawable.ic_baseline_patients_24)
-            replaceFragment(PatientsFragment())
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
+                replaceFragment(PatientsFragment())
+            }
         }
         else {
-            replaceFragment(HomeFragment())
+            if(lastFragment == "settings"){
+                replaceFragment(SettingsFragment())
+            }else{
+                replaceFragment(HomeFragment())
+            }
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
+            if (isNavItemSelectedProgrammatically) {
+                isNavItemSelectedProgrammatically = false
+                return@setOnItemSelectedListener true
+            }
+
             isOnNotificationsScreen = false
             val user = FirebaseAuth.getInstance().currentUser
             when (it.itemId) {
@@ -186,6 +223,9 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout, fragment)
+
+        if(fragment !is HomeFragment)
+            fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
 
@@ -273,6 +313,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setSelectedNavItem(itemId: Int) {
+        isNavItemSelectedProgrammatically = true
         binding.bottomNavigationView.selectedItemId = itemId
     }
 }
